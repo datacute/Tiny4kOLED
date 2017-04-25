@@ -22,9 +22,9 @@
 #include "font8x16.h"
 #endif
 
-#define SSD1306_PAGES 8
-#define SSD1306_MAX_PAGE 7
-#define SSD1306_MAX_PAGE_8x16 6
+#define SSD1306_PAGES 4
+#define SSD1306_MAX_PAGE 3
+#define SSD1306_MAX_PAGE_8x16 2
 
 #define SSD1306_COMMAND 0x00
 #define SSD1306_DATA 0x40
@@ -43,17 +43,16 @@ const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 	0x00,			// ---set low column address
 	0x10,			// ---set high column address
 	0x40,			// --set start line address
-	0x81, 0x3F,		// Set contrast control register
+	0x81, 0x8F,		// Set contrast control register
 	0xA1,			// Set Segment Re-map. A0=address mapped; A1=address 127 mapped. 
 	0xA6,			// Set display mode. A6=Normal; A7=Inverse
-	0xA8, 0x3F,		// Set multiplex ratio(1 to 64)
+	0xA8, 0x1F,		// Set multiplex ratio(1 to 64)
 	0xA4,			// Output RAM to Display
 					// 0xA4=Output follows RAM content; 0xA5,Output ignores RAM content
 	0xD3, 0x00,		// Set display offset. 00 = no offset
-	0xD5,			// --set display clock divide ratio/oscillator frequency
-	0xF0,			// --set divide ratio
+	0xD5, 0x80,		// --set display clock divide ratio/oscillator frequency
 	0xD9, 0x22,		// Set pre-charge period
-	0xDA, 0x12,		// Set com pins hardware configuration		
+	0xDA, 0x02,		// Set com pins hardware configuration		
 	0xDB,			// --set vcomh
 	0x20,			// 0x20,0.77xVcc
 	0x8D, 0x14,		// Set DC-DC enable
@@ -115,8 +114,8 @@ void SSD1306Device::setCursor(uint8_t x, uint8_t y)
 {
 	ssd1306_send_start(SSD1306_COMMAND);
 	TinyWireM.write(0xb0 + y);
-	TinyWireM.write(((x & 0xf0) >> 4) | 0x10); // | 0x10
-	TinyWireM.write((x & 0x0f) | 0x01); // | 0x01
+	TinyWireM.write(((x & 0xf0) >> 4) | 0x10);
+	TinyWireM.write(x & 0x0f);
 	ssd1306_send_stop();
 	oledX = x;
 	oledY = y;
