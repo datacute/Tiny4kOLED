@@ -22,6 +22,10 @@
 #include "font8x16.h"
 #endif
 
+#define SSD1306_PAGES 8
+#define SSD1306_MAX_PAGE 7
+#define SSD1306_MAX_PAGE_8x16 6
+
 #define SSD1306_COMMAND 0x00
 #define SSD1306_DATA 0x40
 
@@ -126,7 +130,7 @@ void SSD1306Device::clear(void)
 void SSD1306Device::fill(uint8_t fill)
 {
 	uint8_t m,n;
-	for (m = 0; m < 8; m++)
+	for (m = 0; m < SSD1306_PAGES; m++)
 	{
 		ssd1306_send_command(0xb0 + m);	// page0 - page1
 		ssd1306_send_command(0x00);		// low column start address
@@ -149,13 +153,13 @@ size_t SSD1306Device::write(byte c) {
 	if(c == '\n'){
 		if(oledFont == FONT6X8) {	//	tBUG
 			oledY++;	
-//			if ( oledY > 7) // tBUG
-//				oledY = 7;
+//			if ( oledY > SSD1306_MAX_PAGE) // tBUG
+//				oledY = SSD1306_MAX_PAGE;
 			}
 		else {
 			oledY+=2;	//tBUG  Large Font up by two
-			if ( oledY > 6) // tBUG
-				oledY = 6;
+			if ( oledY > SSD1306_MAX_PAGE_8x16) // tBUG
+				oledY = SSD1306_MAX_PAGE_8x16;
 			}
 		setCursor(0, oledY);
 		return 1;
@@ -166,8 +170,8 @@ size_t SSD1306Device::write(byte c) {
 		{
 			oledX = 0;
 			oledY++;
-			if ( oledY > 7) // tBUG
-				oledY = 7;
+			if ( oledY > SSD1306_MAX_PAGE) // tBUG
+				oledY = SSD1306_MAX_PAGE;
 			setCursor(oledX, oledY);
 		}
 		
@@ -186,8 +190,8 @@ size_t SSD1306Device::write(byte c) {
 			oledX = 0;
 			oledY+=2;	//tBUG  Large Font up by two
 //			oledY++;	
-			if ( oledY > 6) // tBUG
-				oledY = 6;
+			if ( oledY > SSD1306_MAX_PAGE_8x16) // tBUG
+				oledY = SSD1306_MAX_PAGE_8x16;
 			setCursor(oledX, oledY);
 		}
 		
