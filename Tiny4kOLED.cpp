@@ -55,9 +55,7 @@ const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 	0xDA, 0x02,		// Set com pins hardware configuration		
 	0xDB,			// --set vcomh
 	0x20,			// 0x20,0.77xVcc
-	0x8D, 0x14,		// Set DC-DC enable
-	0xAF			// Display ON in normal mode
-	
+	0x8D, 0x14		// Set DC-DC enable
 };
 
 uint8_t oledFont, oledX, oledY = 0;
@@ -76,7 +74,6 @@ void SSD1306Device::begin(void)
 		ssd1306_send_byte(SSD1306_COMMAND, pgm_read_byte(&ssd1306_init_sequence[i]));
 	}
 	ssd1306_send_stop();
-	clear();
 }
 
 
@@ -233,6 +230,16 @@ void SSD1306Device::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const
 		ssd1306_send_stop();
 	}
 	setCursor(0, 0);
+}
+
+void SSD1306Device::on(void)
+{
+	ssd1306_send_command(0xAF);
+}
+
+void SSD1306Device::off(void)
+{
+	ssd1306_send_command(0xAE);
 }
 
 

@@ -36,6 +36,8 @@ class SSD1306Device: public Print {
     public:
 		SSD1306Device(void);
 		void begin(void);
+		void on(void);
+		void off(void);
 		void setFont(uint8_t font);
 		void setCursor(uint8_t x, uint8_t y);
 		void fill(uint8_t fill);
