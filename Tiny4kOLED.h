@@ -41,7 +41,10 @@ class SSD1306Device: public Print {
 		void setFont(uint8_t font);
 		void setCursor(uint8_t x, uint8_t y);
 		void fill(uint8_t fill);
+		void fillToEOL(uint8_t fill);
+		void fillLength(uint8_t fill, uint8_t length);
 		void clear(void);
+		void clearToEOL(void);
 		void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const uint8_t bitmap[]);
 		virtual size_t write(byte c);
   		using Print::write;

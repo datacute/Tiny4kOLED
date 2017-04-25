@@ -242,6 +242,26 @@ void SSD1306Device::off(void)
 	ssd1306_send_command(0xAE);
 }
 
+void SSD1306Device::clearToEOL(void)
+{
+	fillToEOL(0x00);
+}
+
+void SSD1306Device::fillToEOL(uint8_t fill)
+{
+	fillLength(fill, 128 - oledX);
+}
+
+void SSD1306Device::fillLength(uint8_t fill, uint8_t length)
+{
+	ssd1306_send_start(SSD1306_DATA);
+	for (uint8_t n = 0; n < length; n++)
+	{
+		ssd1306_send_byte(SSD1306_DATA, fill);
+	}
+	ssd1306_send_stop();
+	oledX += length;
+}
 
 SSD1306Device oled;
 
