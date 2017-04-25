@@ -9,7 +9,7 @@
  */
 #include <stdint.h>
 #include <Arduino.h>
- #include <Wire.h>
+#include <TinyWireM.h>  // Version with buffer bugfix: https://github.com/adafruit/TinyWireM
 // #include <avr/pgmspace.h>
 // #include <avr/interrupt.h>
 #include <util/delay.h>

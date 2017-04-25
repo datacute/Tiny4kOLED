@@ -64,7 +64,7 @@ SSD1306Device::SSD1306Device(void){}
 
 void SSD1306Device::begin(void)
 {
-	Wire.begin();
+	TinyWireM.begin();
 	
 	for (uint8_t i = 0; i < sizeof (ssd1306_init_sequence); i++) {
 		ssd1306_send_command(pgm_read_byte(&ssd1306_init_sequence[i]));
@@ -79,48 +79,47 @@ void SSD1306Device::setFont(uint8_t font)
 }
 
 void SSD1306Device::ssd1306_send_command_start(void) {
-	Wire.beginTransmission(SSD1306);
-	Wire.write(0x00);	// write command
+	TinyWireM.beginTransmission(SSD1306);
+	TinyWireM.write(0x00);	// write command
 }
 
 void SSD1306Device::ssd1306_send_command_stop(void) {
-	Wire.endTransmission();
+	TinyWireM.endTransmission();
 }
 
 void SSD1306Device::ssd1306_send_data_byte(uint8_t byte)
 {
-	if(Wire.writeAvailable()){
+	if(TinyWireM.write(byte) == 0){
 		ssd1306_send_data_stop();
 		ssd1306_send_data_start();
+		TinyWireM.write(byte);
 	}
-	Wire.write(byte);
-	
 }
 
 void SSD1306Device::ssd1306_send_command(uint8_t command)
 {
 	ssd1306_send_command_start();
-	Wire.write(command);
+	TinyWireM.write(command);
 	ssd1306_send_command_stop();
 }
 
 void SSD1306Device::ssd1306_send_data_start(void)
 {
-	Wire.beginTransmission(SSD1306);
-	Wire.write(0x40);	//write data
+	TinyWireM.beginTransmission(SSD1306);
+	TinyWireM.write(0x40);	//write data
 }
 
 void SSD1306Device::ssd1306_send_data_stop(void)
 {
-	Wire.endTransmission();
+	TinyWireM.endTransmission();
 }
 
 void SSD1306Device::setCursor(uint8_t x, uint8_t y)
 {
 	ssd1306_send_command_start();
-	Wire.write(0xb0 + y);
-	Wire.write(((x & 0xf0) >> 4) | 0x10); // | 0x10
-	Wire.write((x & 0x0f) | 0x01); // | 0x01
+	TinyWireM.write(0xb0 + y);
+	TinyWireM.write(((x & 0xf0) >> 4) | 0x10); // | 0x10
+	TinyWireM.write((x & 0x0f) | 0x01); // | 0x01
 	ssd1306_send_command_stop();
 	oledX = x;
 	oledY = y;
@@ -202,14 +201,14 @@ size_t SSD1306Device::write(byte c) {
 		ssd1306_send_data_start();
 		for (i = 0; i < 8; i++)
 		{
-			Wire.write(pgm_read_byte(&ssd1306xled_font8x16[ci * 16 + i]));
+			TinyWireM.write(pgm_read_byte(&ssd1306xled_font8x16[ci * 16 + i]));
 		}
 		ssd1306_send_data_stop();
 		setCursor(oledX, oledY + 1);
 		ssd1306_send_data_start();
 		for (i = 0; i < 8; i++)
 		{
-			Wire.write(pgm_read_byte(&ssd1306xled_font8x16[ci * 16 + i + 8]));
+			TinyWireM.write(pgm_read_byte(&ssd1306xled_font8x16[ci * 16 + i + 8]));
 		}
 		ssd1306_send_data_stop();
 		setCursor(oledX + 8, oledY - 1);
