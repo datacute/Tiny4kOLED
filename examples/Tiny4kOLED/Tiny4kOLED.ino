@@ -1,4 +1,4 @@
-#include <DigisparkOLED.h>
+#include <Tiny4kOLED.h>
 #include <TinyWireM.h>
 // ============================================================================
 

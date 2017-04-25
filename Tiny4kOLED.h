@@ -14,8 +14,8 @@
 // #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#ifndef DIGISPARKOLED_H
-#define DIGISPARKOLED_H
+#ifndef TINY4KOLED_H
+#define TINY4KOLED_H
 
 // #define _nofont_8x16		//tBUG
 #ifndef _nofont_8x16	//tBUG

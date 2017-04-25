@@ -15,7 +15,7 @@
 
 #include <avr/pgmspace.h>
 
-#include "DigisparkOLED.h"
+#include "Tiny4kOLED.h"
 #include "font6x8.h"
 
 #ifndef _nofont_8x16	// tBUG Optional removal to save code space
