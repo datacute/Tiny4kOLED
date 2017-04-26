@@ -12,8 +12,8 @@ void setup() {
 }
 
 void loop() {
-  
   // put your main code here, to run repeatedly:
+
   oled.fill(0xFF); //fill screen with color
   delay(1000);
   oled.clear(); //all black
@@ -27,6 +27,6 @@ void loop() {
   oled.print(F("Acute Information"));
   oled.setCursor(16, 3); //cursor x does not need to be a multiple of the font width
   oled.print(F("Revelation Tools"));
-  
+
   delay(3000);
 }

@@ -10,18 +10,16 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include <TinyWireM.h>  // Version with buffer bugfix: https://github.com/adafruit/TinyWireM
-// #include <avr/pgmspace.h>
-// #include <avr/interrupt.h>
 #include <util/delay.h>
 
 #ifndef TINY4KOLED_H
 #define TINY4KOLED_H
 
-// #define _nofont_8x16		//tBUG
-#ifndef _nofont_8x16	//tBUG
- #define FONT8X16		1
+// #define _nofont_8x16
+#ifndef _nofont_8x16
+#define FONT8X16	1
 #endif
- #define FONT6X8		0
+#define FONT6X8		0
 
 // ----------------------------------------------------------------------------
 
@@ -33,7 +31,7 @@
 
 class SSD1306Device: public Print {
 
-    public:
+	public:
 		SSD1306Device(void);
 		void begin(void);
 		void on(void);
@@ -47,16 +45,13 @@ class SSD1306Device: public Print {
 		void clearToEOL(void);
 		void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const uint8_t bitmap[]);
 		virtual size_t write(byte c);
-  		using Print::write;
+		using Print::write;
 	private:
 		void ssd1306_send_command(uint8_t command);
 		void ssd1306_send_start(uint8_t transmission_type);
 		void ssd1306_send_byte(uint8_t transmission_type, uint8_t byte);
 		void ssd1306_send_stop();
-
-
 };
-
 
 extern SSD1306Device oled;
 
