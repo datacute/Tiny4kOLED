@@ -59,6 +59,7 @@ const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 };
 
 uint8_t oledFont, oledX, oledY = 0;
+uint8_t renderingFrame, drawingFrame = 0;
 
 SSD1306Device::SSD1306Device(void){}
 
@@ -101,7 +102,12 @@ void SSD1306Device::ssd1306_send_command(uint8_t command) {
 
 void SSD1306Device::setCursor(uint8_t x, uint8_t y) {
 	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(0xb0 | (y & 0x07));
+	if (renderingFrame == 1) {
+		TinyWireM.write(0xb0 | ((y + 4) & 0x07));
+	}
+	else {
+		TinyWireM.write(0xb0 | (y & 0x07));
+	}
 	TinyWireM.write(((x & 0xf0) >> 4) | 0x10);
 	TinyWireM.write(x & 0x0f);
 	ssd1306_send_stop();
@@ -231,6 +237,31 @@ void SSD1306Device::fillLength(uint8_t fill, uint8_t length) {
 	}
 	ssd1306_send_stop();
 	oledX += length;
+}
+
+void SSD1306Device::switchRenderFrame(void) {
+	if (renderingFrame == 1) {
+		renderingFrame = 0;
+	}
+	else {
+		renderingFrame = 1;
+	}
+}
+
+void SSD1306Device::switchDisplayFrame(void) {
+	if (drawingFrame == 1) {
+		drawingFrame = 0;
+		ssd1306_send_command(0x40);
+	}
+	else {
+		drawingFrame = 1;
+		ssd1306_send_command(0x60);
+	}
+}
+
+void SSD1306Device::switchFrame(void) {
+	switchDisplayFrame();
+	switchRenderFrame();
 }
 
 SSD1306Device oled;

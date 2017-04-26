@@ -36,6 +36,9 @@ class SSD1306Device: public Print {
 		void begin(void);
 		void on(void);
 		void off(void);
+		void switchRenderFrame(void);
+		void switchDisplayFrame(void);
+		void switchFrame(void);
 		void setFont(uint8_t font);
 		void setCursor(uint8_t x, uint8_t y);
 		void fill(uint8_t fill);
