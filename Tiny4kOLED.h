@@ -14,11 +14,16 @@
 #ifndef TINY4KOLED_H
 #define TINY4KOLED_H
 
-// #define _nofont_8x16
-#ifndef _nofont_8x16
-#define FONT8X16	1
-#endif
-#define FONT6X8		0
+typedef struct {
+	uint8_t  *bitmap;      // character bitmaps data
+	uint8_t  width;        // character width in pixels
+	uint8_t  height;       // character height in pages (8 pixels)
+	uint8_t  first, last;  // ASCII extents
+} DCfont;
+
+// Two included fonts, The space isn't used unless it is needed
+#include "font6x8.h"
+#include "font8x16.h"
 
 // ----------------------------------------------------------------------------
 
@@ -36,7 +41,7 @@ class SSD1306Device: public Print {
 		void switchRenderFrame(void);
 		void switchDisplayFrame(void);
 		void switchFrame(void);
-		void setFont(uint8_t font);
+		void setFont(const DCfont *font);
 		void setCursor(uint8_t x, uint8_t y);
 		void fill(uint8_t fill);
 		void fillToEOL(uint8_t fill);

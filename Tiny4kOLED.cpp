@@ -11,11 +11,6 @@
 // ----------------------------------------------------------------------------
 
 #include "Tiny4kOLED.h"
-#include "font6x8.h"
-
-#ifndef _nofont_8x16	// Optional removal to save code space
-#include "font8x16.h"
-#endif
 
 #define SSD1306_PAGES 4
 #define SSD1306_MAX_PAGE 3
@@ -53,7 +48,8 @@ const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 	0x8D, 0x14		// Set DC-DC enable
 };
 
-uint8_t oledFont, oledX, oledY = 0;
+DCfont *oledFont;
+uint8_t oledX, oledY = 0;
 uint8_t renderingFrame, drawingFrame = 0;
 
 SSD1306Device::SSD1306Device(void){}
@@ -68,7 +64,7 @@ void SSD1306Device::begin(void) {
 	ssd1306_send_stop();
 }
 
-void SSD1306Device::setFont(uint8_t font) {
+void SSD1306Device::setFont(const DCfont *font) {
 	oledFont = font;
 }
 
@@ -134,72 +130,51 @@ void SSD1306Device::fill(uint8_t fill) {
 }
 
 size_t SSD1306Device::write(byte c) {
+	if (!oledFont)
+		return 1;
+
+	uint8_t h = oledFont->height;
+	uint8_t w = oledFont->width;
+
 	if (c == '\r')
 		return 1;
+	
 	if (c == '\n') {
-#ifndef _nofont_8x16
-		if (oledFont == FONT6X8) {
-#endif
-			oledY++;
-			if (oledY > SSD1306_MAX_PAGE) {
-				oledY = SSD1306_MAX_PAGE;
-			}
-#ifndef _nofont_8x16
+		oledY+=h;
+		if (oledY > SSD1306_PAGES - h) {
+			oledY = SSD1306_PAGES - h;
 		}
-		else {
-			oledY+=2;
-			if (oledY > SSD1306_MAX_PAGE_8x16) {
-				oledY = SSD1306_MAX_PAGE_8x16;
-			}
-		}
-#endif
 		setCursor(0, oledY);
 		return 1;
 	}
 
-	uint8_t ci = c - 32;
-#ifndef _nofont_8x16
-	if (oledFont == FONT6X8) {
-#endif
-		if (oledX > 122) {
-			oledY++;
-			if (oledY > SSD1306_MAX_PAGE) {
-				oledY = SSD1306_MAX_PAGE;
-			}
-			setCursor(0, oledY);
+	if (oledX > (128 - w)) {
+		oledY+=h;
+		if (oledY > SSD1306_PAGES - h) {
+			oledY = SSD1306_PAGES - h;
 		}
-
-		ssd1306_send_start(SSD1306_DATA);
-		for (uint8_t i= 0; i < 6; i++) {
-			ssd1306_send_byte(SSD1306_DATA, pgm_read_byte(&ssd1306xled_font6x8[ci * 6 + i]));
-		}
-		ssd1306_send_stop();
-		oledX+=6; // we don't need to call setCursor for every character.
-#ifndef _nofont_8x16
+		setCursor(0, oledY);
 	}
-	else {
-		if (oledX > 120) {
-			oledY+=2;
-			if (oledY > SSD1306_MAX_PAGE_8x16) {
-				oledY = SSD1306_MAX_PAGE_8x16;
-			}
-			setCursor(0, oledY);
-		}
 
+	int offet = (c - oledFont->first) * w * h;
+	for (uint8_t line = 0; line < h; line++) {
 		ssd1306_send_start(SSD1306_DATA);
-		for (uint8_t i = 0; i < 8; i++) {
-			TinyWireM.write(pgm_read_byte(&ssd1306xled_font8x16[ci * 16 + i]));
+		for (uint8_t i = 0; i < w; i++) {
+			ssd1306_send_byte(SSD1306_DATA, pgm_read_byte(&(oledFont->bitmap[offet++])));
 		}
 		ssd1306_send_stop();
-		setCursor(oledX, oledY + 1);
-		ssd1306_send_start(SSD1306_DATA);
-		for (uint8_t i = 0; i < 8; i++) {
-			TinyWireM.write(pgm_read_byte(&ssd1306xled_font8x16[ci * 16 + i + 8]));
+		if (h == 1) {
+			oledX+=w;
 		}
-		ssd1306_send_stop();
-		setCursor(oledX + 8, oledY - 1);
+		else {
+			if (line < h - 1) {
+				setCursor(oledX, oledY + 1);
+			}
+			else {
+				setCursor(oledX + w, oledY - (h - 1));
+			}
+		}
 	}
-#endif
 	return 1;
 }
 

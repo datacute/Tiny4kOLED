@@ -111,3 +111,13 @@ const uint8_t ssd1306xled_font6x8 [] PROGMEM = {
 };
 
 // ----------------------------------------------------------------------------
+
+const DCfont TinyOLED4kfont6x8 = {
+  (uint8_t *)ssd1306xled_font6x8,
+  6, // character width in pixels
+  1, // character height in pages (8 pixels)
+  32,123 // ASCII extents
+  };
+
+// for backwards compatibility
+#define FONT6X8 (&TinyOLED4kfont6x8)
