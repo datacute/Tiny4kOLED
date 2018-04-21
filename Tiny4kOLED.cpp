@@ -10,11 +10,6 @@
 
 // ----------------------------------------------------------------------------
 
-#include <stdlib.h>
-#include <avr/io.h>
-
-#include <avr/pgmspace.h>
-
 #include "Tiny4kOLED.h"
 #include "font6x8.h"
 
@@ -97,6 +92,13 @@ void SSD1306Device::ssd1306_send_byte(uint8_t transmission_type, uint8_t byte) {
 void SSD1306Device::ssd1306_send_command(uint8_t command) {
 	ssd1306_send_start(SSD1306_COMMAND);
 	TinyWireM.write(command);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::ssd1306_send_command2(uint8_t command1, uint8_t command2) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
 	ssd1306_send_stop();
 }
 
@@ -214,14 +216,6 @@ void SSD1306Device::bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const
 	setCursor(0, 0);
 }
 
-void SSD1306Device::on(void) {
-	ssd1306_send_command(0xAF);
-}
-
-void SSD1306Device::off(void) {
-	ssd1306_send_command(0xAE);
-}
-
 void SSD1306Device::clearToEOL(void) {
 	fillToEOL(0x00);
 }
@@ -262,6 +256,142 @@ void SSD1306Device::switchDisplayFrame(void) {
 void SSD1306Device::switchFrame(void) {
 	switchDisplayFrame();
 	switchRenderFrame();
+}
+
+// 1. Fundamental Command Table
+
+void SSD1306Device::setContrast(uint8_t contrast) {
+	ssd1306_send_command2(0x81,contrast);
+}
+
+void SSD1306Device::setEntireDisplayOn(bool enable) {
+	if (enable)
+		ssd1306_send_command(0xA5);
+	else
+		ssd1306_send_command(0xA4);
+}
+
+void SSD1306Device::setInverse(bool enable) {
+	if (enable)
+		ssd1306_send_command(0xA7);
+	else
+		ssd1306_send_command(0xA6);
+}
+
+void SSD1306Device::off(void) {
+	ssd1306_send_command(0xAE);
+}
+
+void SSD1306Device::on(void) {
+	ssd1306_send_command(0xAF);
+}
+
+// 2. Scrolling Command Table
+
+void SSD1306Device::scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(0x26);
+	TinyWireM.write(0x00);
+	TinyWireM.write(startPage);
+	TinyWireM.write(interval);
+	TinyWireM.write(endPage);
+	TinyWireM.write(0x00);
+	TinyWireM.write(0xFF);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(0x27);
+	TinyWireM.write(0x00);
+	TinyWireM.write(startPage);
+	TinyWireM.write(interval);
+	TinyWireM.write(endPage);
+	TinyWireM.write(0x00);
+	TinyWireM.write(0xFF);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::scrollRightOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(0x29);
+	TinyWireM.write(0x00);
+	TinyWireM.write(startPage);
+	TinyWireM.write(interval);
+	TinyWireM.write(endPage);
+	TinyWireM.write(offset);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::scrollLeftOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(0x2A);
+	TinyWireM.write(0x00);
+	TinyWireM.write(startPage);
+	TinyWireM.write(interval);
+	TinyWireM.write(endPage);
+	TinyWireM.write(offset);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::deactivateScroll(void) {
+	ssd1306_send_command(0x2E);
+}
+
+void SSD1306Device::activateScroll(void) {
+	ssd1306_send_command(0x2F);
+}
+
+void SSD1306Device::setVerticalScrollArea(uint8_t top, uint8_t rows) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(0xA3);
+	TinyWireM.write(top);
+	TinyWireM.write(rows);
+	ssd1306_send_stop();
+}
+
+// 3. Addressing Setting Command Table
+
+// 4. Hardware Configuration (Panel resolution and layout related) Command Table
+
+void SSD1306Device::setDisplayStartLine(uint8_t startLine) {
+	ssd1306_send_command(0x40 | (startLine & 0x3F));
+}
+
+void SSD1306Device::setSegmentRemap(uint8_t remap) {
+	ssd1306_send_command(0xA0 | (remap & 0x01));
+}
+
+void SSD1306Device::setMultiplexRatio(uint8_t mux) {
+	ssd1306_send_command2(0xA8, mux);
+}
+
+void SSD1306Device::setComOutputDirection(uint8_t direction) {
+	ssd1306_send_command(0xC0 | ((direction & 0x01)<<3));
+}
+
+void SSD1306Device::setDisplayOffset(uint8_t offset) {
+	ssd1306_send_command2(0xD3, offset);
+}
+
+void SSD1306Device::setComPinsHardwareConfiguration(uint8_t alternative, uint8_t enableLeftRightRemap) {
+	ssd1306_send_command2(0xDA, ((enableLeftRightRemap & 0x01) << 5) | ((alternative & 0x01) << 4) | 0x02 );
+}
+
+void SSD1306Device::setDisplayClock(uint8_t divideRatio, uint8_t oscillatorFrequency) {
+	ssd1306_send_command2(0xD5, ((oscillatorFrequency & 0x0F) << 4) | (divideRatio & 0x0F));
+}
+
+void SSD1306Device::setPrechargePeriod(uint8_t phaseOnePeriod, uint8_t phaseTwoPeriod) {
+	ssd1306_send_command2(0xD9, ((phaseTwoPeriod & 0x0F) << 4) | (phaseOnePeriod & 0x0F));
+}
+
+void SSD1306Device::setVcomhDeselectLevel(uint8_t level) {
+	ssd1306_send_command2(0xDB, (level & 0x07) << 4);
+}
+
+void SSD1306Device::nop(void) {
+	ssd1306_send_command(0xE3);
 }
 
 SSD1306Device oled;
