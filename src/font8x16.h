@@ -115,7 +115,7 @@ const uint8_t ssd1306xled_font8x16 [] PROGMEM = {
 
 // ----------------------------------------------------------------------------
 
-const DCfont TinyOLED4kfont8x16 PROGMEM = {
+const DCfont TinyOLED4kfont8x16 = {
   (uint8_t *)ssd1306xled_font8x16,
   8, // character width in pixels
   2, // character height in pages (8 pixels)
