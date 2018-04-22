@@ -1,0 +1,48 @@
+RESEARCH
+
+
+SSD1306
+http://www.solomon-systech.com/en/product/display-ic/oled-driver-controller/ssd1306/
+128 x 64, Dot Matrix OLED/PLED Segment/Common Driver with Controller
+
+SSD1306 is a single-chip CMOS OLED/PLED driver with controller for organic / polymer light emitting diode dot-matrix graphic display system. It consists of 128 segments and 64 commons. This IC is designed for Common Cathode type OLED panel.
+
+The SSD1306 embeds with contrast control, display RAM and oscillator, which reduces the number of external components and power consumption. It has 256-step brightness control. Data/Commands are sent from general MCU through the hardware selectable 6800/8000 series compatible Parallel Interface, I2C interface or Serial Peripheral Interface. It is suitable for many compact portable applications, such as mobile phone sub-display, MP3 player and calculator, etc.
+
+---- SSD1306 Datasheets ----
+
+https://www.adafruit.com/datasheets/SSD1306.pdf
+
+http://www.crystalfontz.com/controllers/Solomon_Systech_SSD1306_v1.1_April_2008.pdf
+
+
+---- Products ----
+
+128x64 OLED
+http://www.adafruit.com/products/326
+Monochrome 0.96 128x64 OLED graphic display ID: 326 - $19.50 : Adafruit Industries, Unique & fun DIY electronics and kits
+
+
+---- Tutorials ----
+
+Monochrome OLED Breakouts
+https://learn.adafruit.com/monochrome-oled-breakouts
+This is a quick tutorial for our 128x64 and 128x32 pixel monochrome OLED displays. These displays are small, only about 1" diagonal, but very readable due to the high contrast of an OLED display. Each OLED display is made of 128x64 or 128x32 individual white OLEDs, each one is turned on or off by the controller chip. Because the display makes its own light, no backlight is required. This reduces the power required to run the OLED and is why the display has such high contrast; we really like this miniature display for its crispness!
+
+
+---- SSD1306 Libraries ----
+
+Adafruit_SSD1306
+https://github.com/adafruit/Adafruit_SSD1306
+This is a library for our Monochrome OLEDs based on SSD1306 drivers
+Requires: Adafruit-GFX-Library
+
+
+---- Projects ----
+
+
+
+---- Other References ----
+
+
+

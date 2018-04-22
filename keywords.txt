@@ -1,0 +1,69 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+SSD1306Device	KEYWORD1
+DCfont	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+switchRenderFrame	KEYWORD2
+switchDisplayFrame	KEYWORD2
+switchFrame	KEYWORD2
+setFont	KEYWORD2
+setCursor	KEYWORD2
+fill	KEYWORD2
+fillToEOL	KEYWORD2
+fillLength	KEYWORD2
+clear	KEYWORD2
+clearToEOL	KEYWORD2
+bitmap	KEYWORD2
+#######################################
+# SSD1306 1. Fundamental Command Table (KEYWORD2)
+#######################################
+setContrast	KEYWORD2
+setEntireDisplayOn	KEYWORD2
+setInverse	KEYWORD2
+off	KEYWORD2
+on	KEYWORD2
+#######################################
+# SSD1306 2. Scrolling Command Table (KEYWORD2)
+#######################################
+scrollRight	KEYWORD2
+scrollLeft	KEYWORD2
+scrollRightOffset	KEYWORD2
+scrollLeftOffset	KEYWORD2
+deactivateScroll	KEYWORD2
+activateScroll	KEYWORD2
+setVerticalScrollArea	KEYWORD2
+#######################################
+# SSD1306 3. Addressing Setting Command Table (KEYWORD2)
+#######################################
+
+#######################################
+# SSD1306 4. Hardware Configuration (Panel resolution and layout related) Command Table (KEYWORD2)
+#######################################
+setDisplayStartLine	KEYWORD2
+setSegmentRemap	KEYWORD2
+setMultiplexRatio	KEYWORD2
+setComOutputDirection	KEYWORD2
+setDisplayOffset	KEYWORD2
+setComPinsHardwareConfiguration	KEYWORD2
+setDisplayClock	KEYWORD2
+setPrechargePeriod	KEYWORD2
+setVcomhDeselectLevel	KEYWORD2
+nop	KEYWORD2
+#######################################
+# Instances (KEYWORD2)
+#######################################
+oled	KEYWORD2
+#######################################
+# Constants (LITERAL1)
+#######################################
+FONT6X8	LITERAL1
+FONT8X16	LITERAL1
