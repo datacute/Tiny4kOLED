@@ -14,7 +14,6 @@
 
 #define SSD1306_PAGES 4
 #define SSD1306_MAX_PAGE 3
-#define SSD1306_MAX_PAGE_8x16 2
 
 #define SSD1306_COMMAND 0x00
 #define SSD1306_DATA 0x40
@@ -156,7 +155,7 @@ size_t SSD1306Device::write(byte c) {
 		setCursor(0, oledY);
 	}
 
-	int offet = (c - oledFont->first) * w * h;
+	int offet = ((uint8_t)c - oledFont->first) * w * h;
 	for (uint8_t line = 0; line < h; line++) {
 		ssd1306_send_start(SSD1306_DATA);
 		for (uint8_t i = 0; i < w; i++) {
