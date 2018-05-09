@@ -255,6 +255,14 @@ void SSD1306Device::switchFrame(void) {
 	switchRenderFrame();
 }
 
+uint8_t SSD1306Device::currentRenderFrame(void) {
+	return renderingFrame;
+}
+
+uint8_t SSD1306Device::currentDisplayFrame(void) {
+	return drawingFrame;
+}
+
 // 1. Fundamental Command Table
 
 void SSD1306Device::setContrast(uint8_t contrast) {
