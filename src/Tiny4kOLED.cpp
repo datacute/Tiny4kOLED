@@ -6,6 +6,9 @@
  *
  * Source code available at: https://bitbucket.org/tinusaur/ssd1306xled
  *
+ * Re-written and extended by Stephen Denne
+ * from 2017-04-25 at https://github.com/datacute/Tiny4kOLED
+ *
  */
 
 // ----------------------------------------------------------------------------
@@ -13,7 +16,6 @@
 #include "Tiny4kOLED.h"
 
 #define SSD1306_PAGES 4
-#define SSD1306_MAX_PAGE 3
 
 #define SSD1306_COMMAND 0x00
 #define SSD1306_DATA 0x40
@@ -42,8 +44,7 @@ const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 	0xD5, 0x80,		// --set display clock divide ratio/oscillator frequency
 	0xD9, 0x22,		// Set pre-charge period
 	0xDA, 0x02,		// Set com pins hardware configuration
-	0xDB,			// --set vcomh
-	0x20,			// 0x20,0.77xVcc
+	0xDB, 0x20,		// --set vcomh 0x20 = 0.77xVcc
 	0x8D, 0x14		// Set DC-DC enable
 };
 
@@ -97,17 +98,39 @@ void SSD1306Device::ssd1306_send_command2(uint8_t command1, uint8_t command2) {
 	ssd1306_send_stop();
 }
 
-void SSD1306Device::setCursor(uint8_t x, uint8_t y) {
+void SSD1306Device::ssd1306_send_command3(uint8_t command1, uint8_t command2, uint8_t command3) {
 	ssd1306_send_start(SSD1306_COMMAND);
-	if (renderingFrame == 1) {
-		TinyWireM.write(0xb0 | ((y + 4) & 0x07));
-	}
-	else {
-		TinyWireM.write(0xb0 | (y & 0x07));
-	}
-	TinyWireM.write(((x & 0xf0) >> 4) | 0x10);
-	TinyWireM.write(x & 0x0f);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	TinyWireM.write(command3);
 	ssd1306_send_stop();
+}
+
+void SSD1306Device::ssd1306_send_command6(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	TinyWireM.write(command3);
+	TinyWireM.write(command4);
+	TinyWireM.write(command5);
+	TinyWireM.write(command6);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6, uint8_t command7) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	TinyWireM.write(command3);
+	TinyWireM.write(command4);
+	TinyWireM.write(command5);
+	TinyWireM.write(command6);
+	TinyWireM.write(command7);
+	ssd1306_send_stop();
+}
+
+void SSD1306Device::setCursor(uint8_t x, uint8_t y) {
+	ssd1306_send_command3(0xb0 | ((renderingFrame == 1 ? y + 4 : y) & 0x07), 0x10 | ((x & 0xf0) >> 4), x & 0x0f);
 	oledX = x;
 	oledY = y;
 }
@@ -263,49 +286,19 @@ void SSD1306Device::on(void) {
 // 2. Scrolling Command Table
 
 void SSD1306Device::scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(0x26);
-	TinyWireM.write(0x00);
-	TinyWireM.write(startPage);
-	TinyWireM.write(interval);
-	TinyWireM.write(endPage);
-	TinyWireM.write(0x00);
-	TinyWireM.write(0xFF);
-	ssd1306_send_stop();
+	ssd1306_send_command7(0x26, 0x00, startPage, interval, endPage, 0x00, 0xFF);
 }
 
 void SSD1306Device::scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(0x27);
-	TinyWireM.write(0x00);
-	TinyWireM.write(startPage);
-	TinyWireM.write(interval);
-	TinyWireM.write(endPage);
-	TinyWireM.write(0x00);
-	TinyWireM.write(0xFF);
-	ssd1306_send_stop();
+	ssd1306_send_command7(0x27, 0x00, startPage, interval, endPage, 0x00, 0xFF);
 }
 
 void SSD1306Device::scrollRightOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(0x29);
-	TinyWireM.write(0x00);
-	TinyWireM.write(startPage);
-	TinyWireM.write(interval);
-	TinyWireM.write(endPage);
-	TinyWireM.write(offset);
-	ssd1306_send_stop();
+	ssd1306_send_command6(0x29, 0x00, startPage, interval, endPage, offset);
 }
 
 void SSD1306Device::scrollLeftOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(0x2A);
-	TinyWireM.write(0x00);
-	TinyWireM.write(startPage);
-	TinyWireM.write(interval);
-	TinyWireM.write(endPage);
-	TinyWireM.write(offset);
-	ssd1306_send_stop();
+	ssd1306_send_command6(0x2A, 0x00, startPage, interval, endPage, offset);
 }
 
 void SSD1306Device::deactivateScroll(void) {
@@ -317,11 +310,7 @@ void SSD1306Device::activateScroll(void) {
 }
 
 void SSD1306Device::setVerticalScrollArea(uint8_t top, uint8_t rows) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(0xA3);
-	TinyWireM.write(top);
-	TinyWireM.write(rows);
-	ssd1306_send_stop();
+	ssd1306_send_command3(0xA3, top, rows);
 }
 
 // 3. Addressing Setting Command Table

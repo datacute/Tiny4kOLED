@@ -6,6 +6,9 @@
  *
  * Source code available at: https://bitbucket.org/tinusaur/ssd1306xled
  *
+ * Re-written and extended by Stephen Denne
+ * from 2017-04-25 at https://github.com/datacute/Tiny4kOLED
+ *
  */
 #include <stdint.h>
 #include <Arduino.h>
@@ -15,10 +18,10 @@
 #define TINY4KOLED_H
 
 typedef struct {
-	uint8_t  *bitmap;      // character bitmaps data
-	uint8_t  width;        // character width in pixels
-	uint8_t  height;       // character height in pages (8 pixels)
-	uint8_t  first, last;  // ASCII extents
+	uint8_t *bitmap;      // character bitmaps data
+	uint8_t width;        // character width in pixels
+	uint8_t height;       // character height in pages (8 pixels)
+	uint8_t first, last;  // ASCII extents
 } DCfont;
 
 // Two included fonts, The space isn't used unless it is needed
@@ -89,6 +92,9 @@ class SSD1306Device: public Print {
 	private:
 		void ssd1306_send_command(uint8_t command);
 		void ssd1306_send_command2(uint8_t command1, uint8_t command2);
+		void ssd1306_send_command3(uint8_t command1, uint8_t command2, uint8_t command3);
+		void ssd1306_send_command6(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6);
+		void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6, uint8_t command7);
 		void ssd1306_send_start(uint8_t transmission_type);
 		void ssd1306_send_byte(uint8_t transmission_type, uint8_t byte);
 		void ssd1306_send_stop();
