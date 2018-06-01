@@ -327,7 +327,7 @@ void SSD1306Device::setSegmentRemap(uint8_t remap) {
 }
 
 void SSD1306Device::setMultiplexRatio(uint8_t mux) {
-	ssd1306_send_command2(0xA8, mux);
+	ssd1306_send_command2(0xA8, (mux - 1) & 0x3F);
 }
 
 void SSD1306Device::setComOutputDirection(uint8_t direction) {
@@ -335,15 +335,18 @@ void SSD1306Device::setComOutputDirection(uint8_t direction) {
 }
 
 void SSD1306Device::setDisplayOffset(uint8_t offset) {
-	ssd1306_send_command2(0xD3, offset);
+	ssd1306_send_command2(0xD3, offset & 0x3F);
 }
 
 void SSD1306Device::setComPinsHardwareConfiguration(uint8_t alternative, uint8_t enableLeftRightRemap) {
 	ssd1306_send_command2(0xDA, ((enableLeftRightRemap & 0x01) << 5) | ((alternative & 0x01) << 4) | 0x02 );
 }
 
+
+// 5. TIming and Driving Scheme Setting Command table
+
 void SSD1306Device::setDisplayClock(uint8_t divideRatio, uint8_t oscillatorFrequency) {
-	ssd1306_send_command2(0xD5, ((oscillatorFrequency & 0x0F) << 4) | (divideRatio & 0x0F));
+	ssd1306_send_command2(0xD5, ((oscillatorFrequency & 0x0F) << 4) | ((divideRatio -1) & 0x0F));
 }
 
 void SSD1306Device::setPrechargePeriod(uint8_t phaseOnePeriod, uint8_t phaseTwoPeriod) {

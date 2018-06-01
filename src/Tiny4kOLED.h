@@ -62,9 +62,9 @@ class SSD1306Device: public Print {
 		void setInverse(bool enable);
 		void off(void);
 		void on(void);
-		
+
 		// 2. Scrolling Command Table
-		
+
 		void scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage);
 		void scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage);
 		void scrollRightOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset);
@@ -72,17 +72,20 @@ class SSD1306Device: public Print {
 		void deactivateScroll(void);
 		void activateScroll(void);
 		void setVerticalScrollArea(uint8_t top, uint8_t rows);
-		
+
 		// 3. Addressing Setting Command Table
 
 		// 4. Hardware Configuration (Panel resolution and layout related) Command Table
-		
+
 		void setDisplayStartLine(uint8_t startLine);
 		void setSegmentRemap(uint8_t remap);
 		void setMultiplexRatio(uint8_t mux);
 		void setComOutputDirection(uint8_t direction);
 		void setDisplayOffset(uint8_t offset);
 		void setComPinsHardwareConfiguration(uint8_t alternative, uint8_t enableLeftRightRemap);
+
+		// 5. TIming and Driving Scheme Setting Command table
+
 		void setDisplayClock(uint8_t divideRatio, uint8_t oscillatorFrequency);
 		void setPrechargePeriod(uint8_t phaseOnePeriod, uint8_t phaseTwoPeriod);
 		void setVcomhDeselectLevel(uint8_t level);
