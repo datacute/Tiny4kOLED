@@ -39,7 +39,6 @@ typedef struct {
 class SSD1306Device: public Print {
 
 	public:
-		SSD1306Device(void);
 		void begin(void);
 		void switchRenderFrame(void);
 		void switchDisplayFrame(void);
@@ -48,6 +47,7 @@ class SSD1306Device: public Print {
 		uint8_t currentDisplayFrame(void);
 		void setFont(const DCfont *font);
 		void setCursor(uint8_t x, uint8_t y);
+		void newLine();
 		void fill(uint8_t fill);
 		void fillToEOL(uint8_t fill);
 		void fillLength(uint8_t fill, uint8_t length);
@@ -92,14 +92,8 @@ class SSD1306Device: public Print {
 		using Print::write;
 
 	private:
-		void ssd1306_send_command(uint8_t command);
-		void ssd1306_send_command2(uint8_t command1, uint8_t command2);
-		void ssd1306_send_command3(uint8_t command1, uint8_t command2, uint8_t command3);
-		void ssd1306_send_command6(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6);
-		void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6, uint8_t command7);
-		void ssd1306_send_start(uint8_t transmission_type);
-		void ssd1306_send_byte(uint8_t transmission_type, uint8_t byte);
-		void ssd1306_send_stop();
+		void newLine(uint8_t fontHeight);
+
 };
 
 extern SSD1306Device oled;

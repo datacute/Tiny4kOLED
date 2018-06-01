@@ -24,7 +24,7 @@
 
 // Some code based on "IIC_without_ACK" by http://www.14blog.com/archives/1358
 
-const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
+static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 	0xAE,			// Display OFF (sleep mode)
 	0x20, 0b00,		// Set Memory Addressing Mode
 					// 00=Horizontal Addressing Mode; 01=Vertical Addressing Mode;
@@ -48,11 +48,70 @@ const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 	0x8D, 0x14		// Set DC-DC enable
 };
 
-DCfont *oledFont;
-uint8_t oledX, oledY = 0;
-uint8_t renderingFrame, drawingFrame = 0;
+static DCfont *oledFont = 0;
+static uint8_t oledX = 0, oledY = 0;
+static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
 
-SSD1306Device::SSD1306Device(void){}
+static void ssd1306_send_start(uint8_t transmission_type) {
+	TinyWireM.beginTransmission(SSD1306);
+	TinyWireM.write(transmission_type);
+}
+
+static void ssd1306_send_stop(void) {
+	TinyWireM.endTransmission();
+}
+
+static void ssd1306_send_byte(uint8_t transmission_type, uint8_t byte) {
+	if (TinyWireM.write(byte) == 0) {
+		ssd1306_send_stop();
+		ssd1306_send_start(transmission_type);
+		TinyWireM.write(byte);
+	}
+}
+
+static void ssd1306_send_command(uint8_t command) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command);
+	ssd1306_send_stop();
+}
+
+static void ssd1306_send_command2(uint8_t command1, uint8_t command2) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	ssd1306_send_stop();
+}
+
+static void ssd1306_send_command3(uint8_t command1, uint8_t command2, uint8_t command3) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	TinyWireM.write(command3);
+	ssd1306_send_stop();
+}
+
+static void ssd1306_send_command6(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	TinyWireM.write(command3);
+	TinyWireM.write(command4);
+	TinyWireM.write(command5);
+	TinyWireM.write(command6);
+	ssd1306_send_stop();
+}
+
+static void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6, uint8_t command7) {
+	ssd1306_send_start(SSD1306_COMMAND);
+	TinyWireM.write(command1);
+	TinyWireM.write(command2);
+	TinyWireM.write(command3);
+	TinyWireM.write(command4);
+	TinyWireM.write(command5);
+	TinyWireM.write(command6);
+	TinyWireM.write(command7);
+	ssd1306_send_stop();
+}
 
 void SSD1306Device::begin(void) {
 	TinyWireM.begin();
@@ -68,69 +127,8 @@ void SSD1306Device::setFont(const DCfont *font) {
 	oledFont = font;
 }
 
-void SSD1306Device::ssd1306_send_start(uint8_t transmission_type) {
-	TinyWireM.beginTransmission(SSD1306);
-	TinyWireM.write(transmission_type);
-}
-
-void SSD1306Device::ssd1306_send_stop(void) {
-	TinyWireM.endTransmission();
-}
-
-void SSD1306Device::ssd1306_send_byte(uint8_t transmission_type, uint8_t byte) {
-	if (TinyWireM.write(byte) == 0) {
-		ssd1306_send_stop();
-		ssd1306_send_start(transmission_type);
-		TinyWireM.write(byte);
-	}
-}
-
-void SSD1306Device::ssd1306_send_command(uint8_t command) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(command);
-	ssd1306_send_stop();
-}
-
-void SSD1306Device::ssd1306_send_command2(uint8_t command1, uint8_t command2) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(command1);
-	TinyWireM.write(command2);
-	ssd1306_send_stop();
-}
-
-void SSD1306Device::ssd1306_send_command3(uint8_t command1, uint8_t command2, uint8_t command3) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(command1);
-	TinyWireM.write(command2);
-	TinyWireM.write(command3);
-	ssd1306_send_stop();
-}
-
-void SSD1306Device::ssd1306_send_command6(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(command1);
-	TinyWireM.write(command2);
-	TinyWireM.write(command3);
-	TinyWireM.write(command4);
-	TinyWireM.write(command5);
-	TinyWireM.write(command6);
-	ssd1306_send_stop();
-}
-
-void SSD1306Device::ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t command3, uint8_t command4, uint8_t command5, uint8_t command6, uint8_t command7) {
-	ssd1306_send_start(SSD1306_COMMAND);
-	TinyWireM.write(command1);
-	TinyWireM.write(command2);
-	TinyWireM.write(command3);
-	TinyWireM.write(command4);
-	TinyWireM.write(command5);
-	TinyWireM.write(command6);
-	TinyWireM.write(command7);
-	ssd1306_send_stop();
-}
-
 void SSD1306Device::setCursor(uint8_t x, uint8_t y) {
-	ssd1306_send_command3(0xb0 | ((renderingFrame == 1 ? y + 4 : y) & 0x07), 0x10 | ((x & 0xf0) >> 4), x & 0x0f);
+	ssd1306_send_command3(renderingFrame | (y & 0x07), 0x10 | ((x & 0xf0) >> 4), x & 0x0f);
 	oledX = x;
 	oledY = y;
 }
@@ -142,54 +140,57 @@ void SSD1306Device::clear(void) {
 void SSD1306Device::fill(uint8_t fill) {
 	for (uint8_t m = 0; m < SSD1306_PAGES; m++) {
 		setCursor(0, m);
-		ssd1306_send_start(SSD1306_DATA);
-		for (uint8_t n = 0; n < 128; n++) {
-			ssd1306_send_byte(SSD1306_DATA, fill);
-		}
-		ssd1306_send_stop();
+		fillToEOL(fill);
 	}
 	setCursor(0, 0);
+}
+
+void SSD1306Device::newLine(uint8_t fontHeight) {
+	oledY+=fontHeight;
+	if (oledY > SSD1306_PAGES - fontHeight) {
+		oledY = SSD1306_PAGES - fontHeight;
+	}
+	setCursor(0, oledY);
+}
+
+void SSD1306Device::newLine() {
+	newLine(oledFont->height);
 }
 
 size_t SSD1306Device::write(byte c) {
 	if (!oledFont)
 		return 1;
 
-	uint8_t h = oledFont->height;
-	uint8_t w = oledFont->width;
-
 	if (c == '\r')
 		return 1;
 	
+	uint8_t h = oledFont->height;
+
 	if (c == '\n') {
-		oledY+=h;
-		if (oledY > SSD1306_PAGES - h) {
-			oledY = SSD1306_PAGES - h;
-		}
-		setCursor(0, oledY);
+		newLine(h);
 		return 1;
 	}
 
+	uint8_t w = oledFont->width;
+
 	if (oledX > (128 - w)) {
-		oledY+=h;
-		if (oledY > SSD1306_PAGES - h) {
-			oledY = SSD1306_PAGES - h;
-		}
-		setCursor(0, oledY);
+		newLine(h);
 	}
 
-	int offet = ((uint8_t)c - oledFont->first) * w * h;
-	for (uint8_t line = 0; line < h; line++) {
+	int offset = ((uint8_t)c - oledFont->first) * w * h;
+	uint8_t line = h;
+	do
+	{
 		ssd1306_send_start(SSD1306_DATA);
 		for (uint8_t i = 0; i < w; i++) {
-			ssd1306_send_byte(SSD1306_DATA, pgm_read_byte(&(oledFont->bitmap[offet++])));
+			ssd1306_send_byte(SSD1306_DATA, pgm_read_byte(&(oledFont->bitmap[offset++])));
 		}
 		ssd1306_send_stop();
 		if (h == 1) {
 			oledX+=w;
 		}
 		else {
-			if (line < h - 1) {
+			if (line > 1) {
 				setCursor(oledX, oledY + 1);
 			}
 			else {
@@ -197,6 +198,7 @@ size_t SSD1306Device::write(byte c) {
 			}
 		}
 	}
+	while (--line);
 	return 1;
 }
 
@@ -222,32 +224,23 @@ void SSD1306Device::fillToEOL(uint8_t fill) {
 }
 
 void SSD1306Device::fillLength(uint8_t fill, uint8_t length) {
+	oledX += length;
 	ssd1306_send_start(SSD1306_DATA);
-	for (uint8_t n = 0; n < length; n++) {
+	do
+	{
 		ssd1306_send_byte(SSD1306_DATA, fill);
 	}
+	while (--length);
 	ssd1306_send_stop();
-	oledX += length;
 }
 
 void SSD1306Device::switchRenderFrame(void) {
-	if (renderingFrame == 1) {
-		renderingFrame = 0;
-	}
-	else {
-		renderingFrame = 1;
-	}
+	renderingFrame ^= 0x04;
 }
 
 void SSD1306Device::switchDisplayFrame(void) {
-	if (drawingFrame == 1) {
-		drawingFrame = 0;
-		ssd1306_send_command(0x40);
-	}
-	else {
-		drawingFrame = 1;
-		ssd1306_send_command(0x60);
-	}
+	drawingFrame ^= 0x20;
+	ssd1306_send_command(drawingFrame);
 }
 
 void SSD1306Device::switchFrame(void) {
@@ -256,11 +249,11 @@ void SSD1306Device::switchFrame(void) {
 }
 
 uint8_t SSD1306Device::currentRenderFrame(void) {
-	return renderingFrame;
+	return (renderingFrame >> 2) & 0x01;
 }
 
 uint8_t SSD1306Device::currentDisplayFrame(void) {
-	return drawingFrame;
+	return (drawingFrame >> 5) & 0x01;
 }
 
 // 1. Fundamental Command Table
