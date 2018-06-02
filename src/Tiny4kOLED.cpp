@@ -26,7 +26,7 @@
 
 static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
 //	0xAE,			// Display OFF (sleep mode)
-	0x20, 0b00,		// Set Memory Addressing Mode
+//	0x20, 0b10,		// Set Memory Addressing Mode
 					// 00=Horizontal Addressing Mode; 01=Vertical Addressing Mode;
 					// 10=Page Addressing Mode (RESET); 11=Invalid
 //	0xB0,			// Set Page Start Address for Page Addressing Mode, 0-7
