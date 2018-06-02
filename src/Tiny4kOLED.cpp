@@ -316,6 +316,26 @@ void SSD1306Device::setVerticalScrollArea(uint8_t top, uint8_t rows) {
 
 // 3. Addressing Setting Command Table
 
+void SSD1306Device::setColumnStartAddress(uint8_t startAddress) {
+	ssd1306_send_command2(startAddress & 0x0F, startAddress >> 4);
+}
+
+void SSD1306Device::setMemoryAddressingMode(uint8_t mode) {
+	ssd1306_send_command2(0x20, mode & 0x03);
+}
+
+void SSD1306Device::setColumnAddress(uint8_t startAddress, uint8_t endAddress) {
+	ssd1306_send_command3(0x21, startAddress & 0x7F, endAddress & 0x7F);
+}
+
+void SSD1306Device::setPageAddress(uint8_t startPage, uint8_t endPage) {
+	ssd1306_send_command3(0x22, startPage & 0x07, endPage & 0x07);
+}
+
+void SSD1306Device::setPageStartAddress(uint8_t startPage) {
+	ssd1306_send_command(0xB0 | startPage & 0x07);
+}
+
 // 4. Hardware Configuration (Panel resolution and layout related) Command Table
 
 void SSD1306Device::setDisplayStartLine(uint8_t startLine) {
@@ -343,7 +363,7 @@ void SSD1306Device::setComPinsHardwareConfiguration(uint8_t alternative, uint8_t
 }
 
 
-// 5. TIming and Driving Scheme Setting Command table
+// 5. Timing and Driving Scheme Setting Command table
 
 void SSD1306Device::setDisplayClock(uint8_t divideRatio, uint8_t oscillatorFrequency) {
 	ssd1306_send_command2(0xD5, ((oscillatorFrequency & 0x0F) << 4) | ((divideRatio -1) & 0x0F));
