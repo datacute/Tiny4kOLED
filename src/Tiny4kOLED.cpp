@@ -333,7 +333,7 @@ void SSD1306Device::setPageAddress(uint8_t startPage, uint8_t endPage) {
 }
 
 void SSD1306Device::setPageStartAddress(uint8_t startPage) {
-	ssd1306_send_command(0xB0 | startPage & 0x07);
+	ssd1306_send_command(0xB0 | (startPage & 0x07));
 }
 
 // 4. Hardware Configuration (Panel resolution and layout related) Command Table
