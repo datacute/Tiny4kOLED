@@ -48,7 +48,7 @@ static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequ
 	0x8D, 0x14		// Set DC-DC enable
 };
 
-static DCfont *oledFont = 0;
+static const DCfont *oledFont = 0;
 static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
 
