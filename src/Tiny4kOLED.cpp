@@ -362,7 +362,6 @@ void SSD1306Device::setComPinsHardwareConfiguration(uint8_t alternative, uint8_t
 	ssd1306_send_command2(0xDA, ((enableLeftRightRemap & 0x01) << 5) | ((alternative & 0x01) << 4) | 0x02 );
 }
 
-
 // 5. Timing and Driving Scheme Setting Command table
 
 void SSD1306Device::setDisplayClock(uint8_t divideRatio, uint8_t oscillatorFrequency) {
@@ -379,6 +378,38 @@ void SSD1306Device::setVcomhDeselectLevel(uint8_t level) {
 
 void SSD1306Device::nop(void) {
 	ssd1306_send_command(0xE3);
+}
+
+// 6. Advance Graphic Command table
+
+void SSD1306Device::fadeOut(uint8_t interval) {
+	ssd1306_send_command2(0x23, (0x20 | (interval & 0x0F)));
+}
+
+void SSD1306Device::blink(uint8_t interval) {
+	ssd1306_send_command2(0x23, (0x30 | (interval & 0x0F)));
+}
+
+void SSD1306Device::disableFadeOutAndBlinking(void) {
+	ssd1306_send_command2(0x23, 0x00);
+}
+
+void SSD1306Device::enableZoomIn(void) {
+	ssd1306_send_command2(0xD6, 0x01);
+}
+
+void SSD1306Device::disableZoomIn(void) {
+	ssd1306_send_command2(0xD6, 0x00);
+}
+
+// Charge Pump Settings
+
+void SSD1306Device::enableChargePump(void) {
+	ssd1306_send_command2(0x8D, 0x14);
+}
+
+void SSD1306Device::disableChargePump(void) {
+	ssd1306_send_command2(0x8D, 0x10);
 }
 
 SSD1306Device oled;

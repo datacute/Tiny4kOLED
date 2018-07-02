@@ -96,6 +96,19 @@ class SSD1306Device: public Print {
 		void setVcomhDeselectLevel(uint8_t level);
 		void nop(void);
 
+		// 6. Advance Graphic Command table
+
+		void fadeOut(uint8_t interval);
+		void blink(uint8_t interval);
+		void disableFadeOutAndBlinking(void);
+		void enableZoomIn(void);
+		void disableZoomIn(void);
+
+		// Charge Pump Settings
+
+		void enableChargePump(void);
+		void disableChargePump(void);
+
 		virtual size_t write(byte c);
 		using Print::write;
 
