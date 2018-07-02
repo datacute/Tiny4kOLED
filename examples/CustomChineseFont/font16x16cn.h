@@ -48,5 +48,3 @@ const DCfont TinyOLED4kfont16x16cn = {
   48,52 // ASCII extents
   };
 
-#define FONT8X16 (&TinyOLED4kfont16x16cn)
-

@@ -2,15 +2,15 @@
 #include "boxyfont.h"
 // ============================================================================
 
-const char datacute1[17] = {214,196,196,191,175,175,186,175,175,175,175,175,175,186,175,175,0};
-const char datacute2[17] = {186,175,175,179,218,210,215,194,183,214,196,175,196,215,210,191,0};
-const char datacute3[17] = {186,175,175,179,218,182,186,218,182,186,175,179,186,186,199,217,0};
-const char datacute4[17] = {211,196,196,217,192,208,208,192,208,211,196,192,208,208,211,217,0};
+const char datacute1[17] = {(char)214,(char)196,(char)196,(char)191,(char)175,(char)175,(char)186,(char)175,(char)175,(char)175,(char)175,(char)175,(char)175,(char)186,(char)175,(char)175,(char)0};
+const char datacute2[17] = {(char)186,(char)175,(char)175,(char)179,(char)218,(char)210,(char)215,(char)194,(char)183,(char)214,(char)196,(char)175,(char)196,(char)215,(char)210,(char)191,(char)0};
+const char datacute3[17] = {(char)186,(char)175,(char)175,(char)179,(char)218,(char)182,(char)186,(char)218,(char)182,(char)186,(char)175,(char)179,(char)186,(char)186,(char)199,(char)217,(char)0};
+const char datacute4[17] = {(char)211,(char)196,(char)196,(char)217,(char)192,(char)208,(char)208,(char)192,(char)208,(char)211,(char)196,(char)192,(char)208,(char)208,(char)211,(char)217,(char)0};
 
-const char boxes1[16] = {218,194,191,175,201,203,187,175,213,209,184,175,214,210,183,0};
-const char boxes2[16] = {195,197,180,175,204,206,185,175,198,216,181,175,199,215,182,0};
-const char boxes3[16] = {192,193,217,175,200,202,188,175,212,207,190,175,211,208,189,0};
-const char boxes4[16] = {176,177,178,219,175,220,223,175,221,222,175,196,179,205,186,0};
+const char boxes1[16] = {(char)218,(char)194,(char)191,(char)175,(char)201,(char)203,(char)187,(char)175,(char)213,(char)209,(char)184,(char)175,(char)214,(char)210,(char)183,(char)0};
+const char boxes2[16] = {(char)195,(char)197,(char)180,(char)175,(char)204,(char)206,(char)185,(char)175,(char)198,(char)216,(char)181,(char)175,(char)199,(char)215,(char)182,(char)0};
+const char boxes3[16] = {(char)192,(char)193,(char)217,(char)175,(char)200,(char)202,(char)188,(char)175,(char)212,(char)207,(char)190,(char)175,(char)211,(char)208,(char)189,(char)0};
+const char boxes4[16] = {(char)176,(char)177,(char)178,(char)219,(char)175,(char)220,(char)223,(char)175,(char)221,(char)222,(char)175,(char)196,(char)179,(char)205,(char)186,(char)0};
 
 void setup() {
   // put your setup code here, to run once:
