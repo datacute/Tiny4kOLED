@@ -114,11 +114,15 @@ static void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t co
 }
 
 void SSD1306Device::begin(void) {
+	begin(sizeof(ssd1306_init_sequence), ssd1306_init_sequence);
+}
+
+void SSD1306Device::begin(uint8_t init_sequence_length, const uint8_t init_sequence []) {
 	TinyWireM.begin();
 
 	ssd1306_send_start(SSD1306_COMMAND);
-	for (uint8_t i = 0; i < sizeof(ssd1306_init_sequence); i++) {
-		ssd1306_send_byte(SSD1306_COMMAND, pgm_read_byte(&ssd1306_init_sequence[i]));
+	for (uint8_t i = 0; i < init_sequence_length; i++) {
+		ssd1306_send_byte(SSD1306_COMMAND, pgm_read_byte(&init_sequence[i]));
 	}
 	ssd1306_send_stop();
 }

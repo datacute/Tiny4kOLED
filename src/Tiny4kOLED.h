@@ -40,6 +40,7 @@ class SSD1306Device: public Print {
 
 	public:
 		void begin(void);
+		void begin(uint8_t init_sequence_length, const uint8_t init_sequence []);
 		void switchRenderFrame(void);
 		void switchDisplayFrame(void);
 		void switchFrame(void);
