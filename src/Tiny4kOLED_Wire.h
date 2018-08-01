@@ -27,7 +27,7 @@ static void wire_endTransmission(void) {
 }
 
 
-#include "Tiny4kOLED_Common.h"
+#include "Tiny4kOLED_common.h"
 SSD1306Device oled(SSD1306, &wire_begin, &wire_beginTransmission, &wire_write, &wire_endTransmission);
 
 #endif

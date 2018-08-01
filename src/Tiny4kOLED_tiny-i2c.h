@@ -27,7 +27,7 @@ static void tinyi2c_send_stop(void) {
 }
 
 
-#include "Tiny4kOLED_Common.h"
+#include "Tiny4kOLED_common.h"
 SSD1306Device oled(SSD1306, &tinyi2c_begin, &tinyi2c_send_start, &tinyi2c_send_byte, &tinyi2c_send_stop);
 
 #endif
