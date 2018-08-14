@@ -272,6 +272,20 @@ void SSD1306Device::fillLength(uint8_t fill, uint8_t length) {
 	ssd1306_send_stop();
 }
 
+void SSD1306Device::startData(void) {
+	ssd1306_send_data_start();
+}
+
+void SSD1306Device::sendData(const uint8_t data) {
+	ssd1306_send_data_byte(data);
+}
+
+void SSD1306Device::endData(void) {
+	ssd1306_send_stop();
+}
+
+// Double Buffering Commands
+
 void SSD1306Device::switchRenderFrame(void) {
 	renderingFrame ^= 0x04;
 }
