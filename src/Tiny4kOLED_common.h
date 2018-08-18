@@ -21,6 +21,7 @@ typedef struct {
 // Two included fonts, The space isn't used unless it is needed
 #include "font6x8.h"
 #include "font8x16.h"
+#include "font8x16digits.h"
 
 // ----------------------------------------------------------------------------
 
