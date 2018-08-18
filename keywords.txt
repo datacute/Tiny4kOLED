@@ -15,14 +15,20 @@ begin	KEYWORD2
 switchRenderFrame	KEYWORD2
 switchDisplayFrame	KEYWORD2
 switchFrame	KEYWORD2
+currentRenderFrame	KEYWORD2
+currentDisplayFrame	KEYWORD2
 setFont	KEYWORD2
 setCursor	KEYWORD2
+newLine	KEYWORD2
 fill	KEYWORD2
 fillToEOL	KEYWORD2
 fillLength	KEYWORD2
 clear	KEYWORD2
 clearToEOL	KEYWORD2
 bitmap	KEYWORD2
+startData	KEYWORD2
+sendData	KEYWORD2
+endData	KEYWORD2
 #######################################
 # SSD1306 1. Fundamental Command Table (KEYWORD2)
 #######################################
@@ -44,7 +50,11 @@ setVerticalScrollArea	KEYWORD2
 #######################################
 # SSD1306 3. Addressing Setting Command Table (KEYWORD2)
 #######################################
-
+setColumnStartAddress	KEYWORD2
+setMemoryAddressingMode	KEYWORD2
+setColumnAddress	KEYWORD2
+setPageAddress	KEYWORD2
+setPageStartAddress	KEYWORD2
 #######################################
 # SSD1306 4. Hardware Configuration (Panel resolution and layout related) Command Table (KEYWORD2)
 #######################################
@@ -54,10 +64,26 @@ setMultiplexRatio	KEYWORD2
 setComOutputDirection	KEYWORD2
 setDisplayOffset	KEYWORD2
 setComPinsHardwareConfiguration	KEYWORD2
+#######################################
+# SSD1306 5. Timing and Driving Scheme Setting Command Table (KEYWORD2)
+#######################################
 setDisplayClock	KEYWORD2
 setPrechargePeriod	KEYWORD2
 setVcomhDeselectLevel	KEYWORD2
 nop	KEYWORD2
+#######################################
+# SSD1306 6. Advance Graphic Command Table (KEYWORD2)
+#######################################
+fadeOut	KEYWORD2
+blink	KEYWORD2
+disableFadeOutAndBlinking	KEYWORD2
+enableZoomIn	KEYWORD2
+disableZoomIn	KEYWORD2
+#######################################
+# SSD1306 Charge Pump Settings (KEYWORD2)
+#######################################
+enableChargePump	KEYWORD2
+disableChargePump	KEYWORD2
 #######################################
 # Instances (KEYWORD2)
 #######################################
@@ -67,3 +93,4 @@ oled	KEYWORD2
 #######################################
 FONT6X8	LITERAL1
 FONT8X16	LITERAL1
+FONT8X16DIGITS	LITERAL1
