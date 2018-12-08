@@ -262,13 +262,10 @@ void SSD1306Device::fillToEOL(uint8_t fill) {
 }
 
 void SSD1306Device::fillLength(uint8_t fill, uint8_t length) {
+	if (length == 0) return;
 	oledX += length;
 	ssd1306_send_data_start();
-	do
-	{
-		ssd1306_send_data_byte(fill);
-	}
-	while (--length);
+	repeatData(fill, length);
 	ssd1306_send_stop();
 }
 
@@ -278,6 +275,16 @@ void SSD1306Device::startData(void) {
 
 void SSD1306Device::sendData(const uint8_t data) {
 	ssd1306_send_data_byte(data);
+}
+
+void SSD1306Device::repeatData(uint8_t data, uint8_t length) {
+	for (uint8_t x = 0; x < length; x++) {
+		ssd1306_send_data_byte(data);
+	}
+}
+
+void SSD1306Device::clearData(uint8_t length) {
+	repeatData(0, length);
 }
 
 void SSD1306Device::endData(void) {
