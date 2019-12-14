@@ -26,11 +26,11 @@ static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequ
 					// 10=Page Addressing Mode (RESET); 11=Invalid
 //	0xB0,			// Set Page Start Address for Page Addressing Mode, 0-7
 	0xC8,			// Set COM Output Scan Direction
-//	0x00,			// ---set low column address
-//	0x10,			// ---set high column address
-//	0x40,			// --set start line address
+//	0x00,			// Set low nibble of column address
+//	0x10,			// Set high nibble of column address
+//	0x40,			// Set display start line address
 //	0x81, 0x7F,		// Set contrast control register
-	0xA1,			// Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA1,			// Set Segment Re-map. A0=column 0 mapped to SEG0; A1=column 127 mapped to SEG0.
 //	0xA6,			// Set display mode. A6=Normal; A7=Inverse
 	0xA8, 0x1F,		// Set multiplex ratio(1 to 64)
 //	0xA4,			// Output RAM to Display
