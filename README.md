@@ -15,7 +15,7 @@ I have extensively re-written it, with the following changes:
 - Altered the library to be for a 128x32 display.
 - Added double buffering control code.
 - Exposed all of the SSD1306 features.
-- Optimised font usage, enabling custom fonts.
+- Optimised font usage, enabling custom fonts. (See [TinyOLED-Fonts](https://github.com/datacute/TinyOLED-Fonts))
 - Optimised code size.
 - Exposed the blink and fade SSD1306 features documented in revision 1.2 of the SSD1306 Specification.
 - Support three different I<sup>2</sup>C interfaces:
