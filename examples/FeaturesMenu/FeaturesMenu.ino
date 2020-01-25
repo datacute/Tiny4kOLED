@@ -466,12 +466,14 @@ void sleepWaitingForInput(uint8_t pins) {
 }
 
 void readInputs() {
+  bool oldRockerUp = rockerUp;
+  bool oldRockerDown = rockerDown;
+  bool oldRockerIn = rockerIn;
   rockerUp = digitalRead(rockerUpPin)==LOW;
   rockerDown = digitalRead(rockerDownPin)==LOW;
-  bool oldRockerIn = rockerIn;
   rockerIn = digitalRead(rockerInPin)==LOW;
   rockerInChanged = false;
-  if (oldRockerIn != rockerIn)
+  if ((oldRockerUp != rockerUp) || (oldRockerDown != rockerDown) || (oldRockerIn != rockerIn))
   {
     long currentTime = millis();
     if (currentTime < debounceTime && currentTime >= lastWakeUp) // time might wrap
@@ -479,6 +481,9 @@ void readInputs() {
       return;
     }
     debounceTime = currentTime + debounceDelay;
+  }
+  if (oldRockerIn != rockerIn)
+  {
     rockerInChanged = true;
   }
 }
