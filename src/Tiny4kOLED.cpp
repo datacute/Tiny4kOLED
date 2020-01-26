@@ -48,9 +48,9 @@ static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
 
 static void (*wireBeginFn)(void);
-static void (*wireBeginTransmissionFn)(void);
+static bool (*wireBeginTransmissionFn)(void);
 static bool (*wireWriteFn)(uint8_t byte);
-static void (*wireEndTransmissionFn)(void);
+static uint8_t (*wireEndTransmissionFn)(void);
 
 static void ssd1306_begin(void) {
 	wireBeginFn();
@@ -138,7 +138,7 @@ static void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t co
 	ssd1306_send_stop();
 }
 
-SSD1306Device::SSD1306Device(void (*wireBeginFunc)(void), void (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), void (*wireEndTransmissionFunc)(void)) {
+SSD1306Device::SSD1306Device(void (*wireBeginFunc)(void), bool (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), uint8_t (*wireEndTransmissionFunc)(void)) {
 	wireBeginFn = wireBeginFunc;
 	wireBeginTransmissionFn = wireBeginTransmissionFunc;
 	wireWriteFn = wireWriteFunc;

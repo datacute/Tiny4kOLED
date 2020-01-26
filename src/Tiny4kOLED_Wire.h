@@ -11,20 +11,33 @@
 #include <Wire.h>
 #include "Tiny4kOLED_common.h"
 
-static void wire_begin(void) {
-	Wire.begin();
+static bool wire_beginTransmission(void);
+static uint8_t wire_endTransmission(void);
+
+inline static bool check (void) {
+	const uint8_t noError = 0x00;
+	wire_beginTransmission();
+	return (wire_endTransmission()==noError);
 }
 
-static void wire_beginTransmission(void) {
+static void wire_begin(void) {
+	Wire.begin();
+	while (!check()) {
+		delay(10);
+	}
+}
+
+static bool wire_beginTransmission(void) {
 	Wire.beginTransmission(SSD1306);
+	return true;
 }
 
 static bool wire_write(uint8_t byte) {
 	return Wire.write(byte);
 }
 
-static void wire_endTransmission(void) {
-	Wire.endTransmission();
+static uint8_t wire_endTransmission(void) {
+	return Wire.endTransmission();
 }
 
 SSD1306Device oled(&wire_begin, &wire_beginTransmission, &wire_write, &wire_endTransmission);
