@@ -34,7 +34,7 @@ typedef struct {
 class SSD1306Device: public Print {
 
 	public:
-		SSD1306Device(uint8_t ssd1306_i2c_address, void (*wireBeginFunc)(void), void (*wireBeginTransmissionFunc)(uint8_t ssd1306_i2c_address), bool (*wireWriteFunc)(uint8_t byte), void (*wireEndTransmissionFunc)(void));
+		SSD1306Device(void (*wireBeginFunc)(void), void (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), void (*wireEndTransmissionFunc)(void));
 
 		void begin(void);
 		void begin(uint8_t init_sequence_length, const uint8_t init_sequence []);

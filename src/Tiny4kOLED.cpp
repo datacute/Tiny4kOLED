@@ -43,13 +43,12 @@ static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequ
 	0x8D, 0x14		// Set DC-DC enable
 };
 
-static uint8_t i2c_address;
 static const DCfont *oledFont = 0;
 static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
 
 static void (*wireBeginFn)(void);
-static void (*wireBeginTransmissionFn)(uint8_t i2c_address);
+static void (*wireBeginTransmissionFn)(void);
 static bool (*wireWriteFn)(uint8_t byte);
 static void (*wireEndTransmissionFn)(void);
 
@@ -57,8 +56,8 @@ static void ssd1306_begin(void) {
 	wireBeginFn();
 }
 
-static void ssd1306_send_start(uint8_t ssd1306_i2c_address) {
-	wireBeginTransmissionFn(ssd1306_i2c_address);
+static void ssd1306_send_start(void) {
+	wireBeginTransmissionFn();
 }
 
 static bool ssd1306_send_byte(uint8_t byte) {
@@ -70,12 +69,12 @@ static void ssd1306_send_stop(void) {
 }
 
 static void ssd1306_send_command_start(void) {
-	ssd1306_send_start(i2c_address);
+	ssd1306_send_start();
 	ssd1306_send_byte(SSD1306_COMMAND);
 }
 
 static void ssd1306_send_data_start(void) {
-	ssd1306_send_start(i2c_address);
+	ssd1306_send_start();
 	ssd1306_send_byte(SSD1306_DATA);
 }
 
@@ -139,8 +138,7 @@ static void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t co
 	ssd1306_send_stop();
 }
 
-SSD1306Device::SSD1306Device(uint8_t ssd1306_i2c_address, void (*wireBeginFunc)(void), void (*wireBeginTransmissionFunc)(uint8_t ssd1306_i2c_address), bool (*wireWriteFunc)(uint8_t byte), void (*wireEndTransmissionFunc)(void)) {
-	i2c_address = ssd1306_i2c_address;
+SSD1306Device::SSD1306Device(void (*wireBeginFunc)(void), void (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), void (*wireEndTransmissionFunc)(void)) {
 	wireBeginFn = wireBeginFunc;
 	wireBeginTransmissionFn = wireBeginTransmissionFunc;
 	wireWriteFn = wireWriteFunc;

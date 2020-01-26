@@ -9,13 +9,14 @@
 #define TINY4KOLED_WIRE_H
 
 #include <Wire.h>
+#include "Tiny4kOLED_common.h"
 
 static void wire_begin(void) {
 	Wire.begin();
 }
 
-static void wire_beginTransmission(uint8_t i2c_address) {
-	Wire.beginTransmission(i2c_address);
+static void wire_beginTransmission(void) {
+	Wire.beginTransmission(SSD1306);
 }
 
 static bool wire_write(uint8_t byte) {
@@ -26,8 +27,6 @@ static void wire_endTransmission(void) {
 	Wire.endTransmission();
 }
 
-
-#include "Tiny4kOLED_common.h"
-SSD1306Device oled(SSD1306, &wire_begin, &wire_beginTransmission, &wire_write, &wire_endTransmission);
+SSD1306Device oled(&wire_begin, &wire_beginTransmission, &wire_write, &wire_endTransmission);
 
 #endif
