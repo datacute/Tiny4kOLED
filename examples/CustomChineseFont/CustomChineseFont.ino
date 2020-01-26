@@ -6,6 +6,10 @@
  *
  */
 
+// Choose your I2C implementation
+//#include <Wire.h>
+//#include <TinyWireM.h>
+//#include <TinyI2CMaster.h> // see https://github.com/technoblogy/tiny-i2c
 #include <Tiny4kOLED.h>
 #include "font16x16cn.h"
 // ============================================================================

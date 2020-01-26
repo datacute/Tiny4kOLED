@@ -6,7 +6,7 @@ It is interactive, controlled by three buttons for up, down, and select.
 // Choose your I2C implementation
 //#include <Wire.h>
 //#include <TinyWireM.h>
-//#include <TinyI2CMaster.h>
+//#include <TinyI2CMaster.h> // see https://github.com/technoblogy/tiny-i2c
 #include <Tiny4kOLED.h>
 // ============================================================================
 
