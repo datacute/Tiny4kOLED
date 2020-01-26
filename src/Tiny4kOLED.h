@@ -8,14 +8,15 @@
 #ifndef TINY4KOLED_H
 #define TINY4KOLED_H
 
-#if defined(TinyWireM_h)
+#if defined(TwoWire_h) || defined (USIWire_h)
+#include "Tiny4kOLED_Wire.h"
+#elif defined(TinyWireM_h)
 #include "Tiny4kOLED_TinyWireM.h"
 #elif defined(TinyI2CMaster_h)
 #include "Tiny4kOLED_tiny-i2c.h"
-#elif defined(TwoWire_h)
-#include "Tiny4kOLED_Wire.h"
 #else
-#include "Tiny4kOLED_TinyWireM.h"
+#include <Wire.h>
+#include "Tiny4kOLED_Wire.h"
 #endif
 
 #endif
