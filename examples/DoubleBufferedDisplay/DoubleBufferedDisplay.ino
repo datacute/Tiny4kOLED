@@ -28,7 +28,7 @@
 // The code to wait for it to be ready uses 20 bytes of program storage space
 // If you are using a white OLED, this can be reclaimed by uncommenting
 // the following line (before including Tiny4kOLED.h):
-#define TINY4KOLED_QUICK_BEGIN
+//#define TINY4KOLED_QUICK_BEGIN
 
 #include <Tiny4kOLED.h>
 
