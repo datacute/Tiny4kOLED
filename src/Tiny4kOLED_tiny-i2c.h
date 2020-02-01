@@ -16,10 +16,12 @@ static uint8_t tinyi2c_send_stop(void);
 
 static void tinyi2c_begin(void) {
 	TinyI2C.init();
+#ifndef TINY4KOLED_QUICK_BEGIN
 	while (!tinyi2c_send_start()) {
 		delay(10);
 	}
 	tinyi2c_send_stop();
+#endif
 }
 
 static bool tinyi2c_send_start(void) {

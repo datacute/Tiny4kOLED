@@ -6,20 +6,29 @@
  *
  */
 
-// Choose your I2C implementation before including Tiny4kOLED.h (the default if none is selected is Wire.h)
+// Choose your I2C implementation before including Tiny4kOLED.h
+// The default is selected is Wire.h
 
 // To use the Wire library:
-// This example compiles to 4402 bytes of program storage space and 88 bytes f dynamic memory.
+// This example compiles to 4402 bytes of program storage space
+// and 88 bytes of dynamic memory.
 //#include <Wire.h>
 
 // To use the Adafruit's TinyWireM library:
 // (Saves about 350 bytes and 20 bytes of RAM over Wire.h)
-// (If you see a strange dot pattern then upgrade the TinyWireM library to get the buffer overflow fix.)
+// (If you see a strange dot pattern then upgrade the TinyWireM
+//  library to get the buffer overflow fix.)
 //#include <TinyWireM.h>
 
 // To use the TinyI2C library from https://github.com/technoblogy/tiny-i2c
 // (Saves about 570 bytes and 40 bytes of RAM over Wire.h)
 //#include <TinyI2CMaster.h>
+
+// The blue OLED screen requires a long initialization on power on.
+// The code to wait for it to be ready uses 20 bytes of program storage space
+// If you are using a white OLED, this can be reclaimed by uncommenting
+// the following line (before including Tiny4kOLED.h):
+#define TINY4KOLED_QUICK_BEGIN
 
 #include <Tiny4kOLED.h>
 

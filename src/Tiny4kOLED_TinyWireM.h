@@ -14,17 +14,21 @@
 static bool tinywirem_beginTransmission(void);
 static uint8_t tinywirem_endTransmission(void);
 
+#ifndef TINY4KOLED_QUICK_BEGIN
 static bool check (void) {
 	const uint8_t noError = 0x00;
 	tinywirem_beginTransmission();
 	return (tinywirem_endTransmission()==noError);
 }
+#endif
 
 static void tinywirem_begin(void) {
 	TinyWireM.begin();
+#ifndef TINY4KOLED_QUICK_BEGIN
 	while (!check()) {
 		delay(10);
 	}
+#endif
 }
 
 static bool tinywirem_beginTransmission(void) {
