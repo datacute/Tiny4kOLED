@@ -40,7 +40,7 @@ void setup() {
   oled.setCursor(0,3);
   oled.print(F("Fifty rows vertically"));
   oled.setCursor(0,4);
-  oled.print(F("+ 3 rows horizontally"));
+  oled.print(F("+ 5 rows horizontally"));
   oled.setCursor(0,5);
   oled.print(F("Tiny4kOLED example by"));
   oled.setCursor(80,6);
