@@ -14,7 +14,7 @@ I have extensively re-written it, with the following changes:
 - Left the display off in the initialization, so that the display could be cleared before being shown.
 - Altered the library to be for a 128x32 display.
 - Added double buffering control code.
-- Exposed all of the SSD1306 features.
+- Exposed all of the SSD1306 features, with example code.
 - Optimised font usage, enabling custom fonts. (See [TinyOLED-Fonts](https://github.com/datacute/TinyOLED-Fonts))
 - Optimised code size.
 - Exposed the blink and fade SSD1306 features documented in revision 1.2 of the SSD1306 Specification.
@@ -22,11 +22,39 @@ I have extensively re-written it, with the following changes:
   - Spence Konde's Wire.h that comes with [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore)
   - Adafruit's [TinyWireM](https://github.com/adafruit/TinyWireM)
   - David Johnson-Davies / Technoblogy's [TinyI2C](https://github.com/technoblogy/tiny-i2c)
+- Added back support for 128x64 screens, including double buffering when 'zoom' is enabled (32 lines are each drawn twice).
+
+## 128x64 / 128x32 / 64x48 / 72x40 / 64x32
+
+The screens with a resolution of 128 by 64 pixels support a feature called 'zoom' where each row is drawn twice. This also only uses half the memory, and so the double buffering technique can be used when the screen is in that mode.
+
+The double buffering technique doesn't have to be used, and library works with SSD1306 screens of different resolutions, however the default init sequence in this library is for a screen with 32 rows of pixel. Custom init sequences can be supplied. An empty init sequence can also be used with `oled.begin(0,0);` so the SSD1306 can be initialized by your own code.
+
+The `clear` and `fill` commands, and the wrapping of lines of text by this library, use the screen's height in `pages` (a `page` is 8 rows of pixels). This library defaults the number of `pages` to 4. For screens with other geometries call the `setPages` method.
 
 ## Example Usage
 
 ```c
+// Choose your I2C implementation before including Tiny4kOLED.h
+// The default is selected is Wire.h
+
+// To use the Wire library:
+//#include <Wire.h>
+
+// To use the Adafruit's TinyWireM library:
+//#include <TinyWireM.h>
+
+// To use the TinyI2C library from https://github.com/technoblogy/tiny-i2c
+//#include <TinyI2CMaster.h>
+
+// The blue OLED screen requires a long initialization on power on.
+// The code to wait for it to be ready uses 20 bytes of program storage space
+// If you are using a white OLED, this can be reclaimed by uncommenting
+// the following line (before including Tiny4kOLED.h):
+//#define TINY4KOLED_QUICK_BEGIN
+
 #include <Tiny4kOLED.h>
+
 void setup() {
   // Send the initialization sequence to the oled. This leaves the display turned off
   oled.begin();
