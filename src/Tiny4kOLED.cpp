@@ -43,6 +43,7 @@ static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequ
 	0x8D, 0x14		// Set DC-DC enable
 };
 
+static uint8_t oledPages = SSD1306_PAGES;
 static const DCfont *oledFont = 0;
 static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
@@ -159,6 +160,15 @@ void SSD1306Device::begin(uint8_t init_sequence_length, const uint8_t init_seque
 	ssd1306_send_stop();
 }
 
+void SSD1306Device::setPages(uint8_t pages) {
+	oledPages = pages;
+}
+
+void SSD1306Device::setRotation(uint8_t rotation) {
+	uint8_t rotationBit = (rotation & 0x01);
+	ssd1306_send_command2(0xC0 | (rotationBit << 3), 0xA0 | rotationBit);
+}
+
 void SSD1306Device::setFont(const DCfont *font) {
 	oledFont = font;
 }
@@ -174,7 +184,7 @@ void SSD1306Device::clear(void) {
 }
 
 void SSD1306Device::fill(uint8_t fill) {
-	for (uint8_t m = 0; m < SSD1306_PAGES; m++) {
+	for (uint8_t m = 0; m < oledPages; m++) {
 		setCursor(0, m);
 		fillToEOL(fill);
 	}
@@ -183,8 +193,8 @@ void SSD1306Device::fill(uint8_t fill) {
 
 void SSD1306Device::newLine(uint8_t fontHeight) {
 	oledY+=fontHeight;
-	if (oledY > SSD1306_PAGES - fontHeight) {
-		oledY = SSD1306_PAGES - fontHeight;
+	if (oledY > oledPages - fontHeight) {
+		oledY = oledPages - fontHeight;
 	}
 	setCursor(0, oledY);
 }

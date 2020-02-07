@@ -31,6 +31,8 @@ sendData	KEYWORD2
 repeatData	KEYWORD2
 clearData	KEYWORD2
 endData	KEYWORD2
+setPages	KEYWORD2
+setRotation	KEYWORD2
 #######################################
 # SSD1306 1. Fundamental Command Table (KEYWORD2)
 #######################################

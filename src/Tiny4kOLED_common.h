@@ -57,6 +57,8 @@ class SSD1306Device: public Print {
 		void repeatData(uint8_t data, uint8_t length);
 		void clearData(uint8_t length);
 		void endData(void);
+		void setPages(uint8_t pages);
+		void setRotation(uint8_t rotation);
 
 		// 1. Fundamental Command Table
 
