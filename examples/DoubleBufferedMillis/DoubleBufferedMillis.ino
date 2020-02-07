@@ -6,13 +6,48 @@
  *
  */
 
-// Choose your I2C implementation
+// Choose your I2C implementation before including Tiny4kOLED.h
+// The default is selected is Wire.h
+
+// To use the Wire library:
+// This example compiles to 4402 bytes of program storage space
+// and 88 bytes of dynamic memory.
 //#include <Wire.h>
+
+// To use the Adafruit's TinyWireM library:
+// (Saves about 350 bytes and 20 bytes of RAM over Wire.h)
+// (If you see a strange dot pattern then upgrade the TinyWireM
+//  library to get the buffer overflow fix.)
 //#include <TinyWireM.h>
-//#include <TinyI2CMaster.h> // see https://github.com/technoblogy/tiny-i2c
+
+// To use the TinyI2C library from https://github.com/technoblogy/tiny-i2c
+// (Saves about 570 bytes and 40 bytes of RAM over Wire.h)
+//#include <TinyI2CMaster.h>
+
+// The blue OLED screen requires a long initialization on power on.
+// The code to wait for it to be ready uses 20 bytes of program storage space
+// If you are using a white OLED, this can be reclaimed by uncommenting
+// the following line (before including Tiny4kOLED.h):
+//#define TINY4KOLED_QUICK_BEGIN
+
 #include <Tiny4kOLED.h>
 
 // ============================================================================
+
+// This example simply shows the number of milliseconds since reset
+// To show the double-buffering effect, the location where the timer
+// is displayed moves left and right, and the screen is completely cleared.
+
+// The number increases, so if the location was not moving,
+// we would not need to repeatedly clear and initialize the display.
+// But we are doing so to demonstrate the capability of the double
+// buffering code to result in a smooth animation
+
+// Uncomment this line to disable the code performing the double buffering
+//#define NO_DOUBLE_BUFFERING
+
+uint8_t location = 0;
+bool leftToRight = true;
 
 void setup() {
   // Send the initialization sequence to the oled. This leaves the display turned off.
@@ -22,23 +57,42 @@ void setup() {
   // 2 lines of 16 characters exactly fills 128x32.
   oled.setFont(FONT8X16);
   // Setup the first half of memory.
-  initDisplay();
+  updateDisplay();
+#ifndef NO_DOUBLE_BUFFERING
   // Switch the half of RAM that we are writing to, to be the half that is non currently displayed.
   oled.switchRenderFrame();
   // Setup the second half of memory.
-  initDisplay();
-  // Call your own display updating code.
   updateDisplay();
+  // Switch back to being ready to render on the first frame while displaying the second frame.
+  oled.switchFrame();
+#endif
   // Turn on the display.
   oled.on();
 }
 
 void loop() {
   delay(50);
+  if (leftToRight) {
+    location++;
+    if (location == 60) {
+      leftToRight = false;
+    }
+  } else {
+    location--;
+    if (location == 0) {
+      leftToRight = true;
+    }
+  }
   updateDisplay();
+#ifndef NO_DOUBLE_BUFFERING
+  // Swap which half of RAM is being written to, and which half is being displayed.
+  // This is equivalent to calling both switchRenderFrame and switchDisplayFrame.
+  // To see the benefit of double buffering, try this code again with this line commented out.
+  oled.switchFrame();
+#endif
 }
 
-void initDisplay() {
+void updateDisplay() {
   // Clear whatever random data has been left in memory.
   oled.clear();
   // Position the text cursor
@@ -46,19 +100,13 @@ void initDisplay() {
   // with the top of the font aligned with one of the four 8 bit high RAM pages.
   // The Y value therefore can only have the value 0, 1, 2, or 3.
   // usage: oled.setCursor(X IN PIXELS, Y IN ROWS OF 8 PIXELS STARTING WITH 0);
-  oled.setCursor(0, 1);
-  // Write text to oled RAM (which is not currently being displayed).
+  oled.setCursor(location, 0);
+  // Write text to oled RAM.
   oled.print(F("ms:"));
-}
-
-void updateDisplay() {
-  // Position the text cursor
-  oled.setCursor(32, 1);
   // Write the number of milliseconds since power on.
-  // The number increases, so always overwrites any stale data.
-  // This means we do not need to repeatedly clear and initialize the display.
   oled.print(millis());
-  // Swap which half of RAM is being written to, and which half is being displayed.
-  // This is equivalent to calling both switchRenderFrame and switchDisplayFrame.
-  oled.switchFrame();
+  // Write it again
+  oled.setCursor(location, 2);
+  oled.print(F("ms:"));
+  oled.print(millis());
 }
