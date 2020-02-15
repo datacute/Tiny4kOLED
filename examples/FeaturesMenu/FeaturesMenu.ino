@@ -419,14 +419,6 @@ void PixelsChanged(uint8_t value) {
 ISR(PCINT0_vect) {}
 
 void setup() {
-  #if defined(TinyI2CMaster_h)
-  TinyI2C.init();
-  while (!TinyI2C.start(0x3C, 0)) {
-    delay(10);
-  }
-  TinyI2C.stop();
-  #endif
-  
   setupPins();
   setupOLED();
   setupADC();
@@ -441,6 +433,9 @@ void setupPins() {
 
 void setupOLED() {
   oled.begin();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1.
+  //oled.setRotation(0);
   oled.setFont(FONT6X8);
   oled.clear();
   oled.on();

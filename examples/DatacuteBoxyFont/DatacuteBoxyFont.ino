@@ -42,6 +42,9 @@ void setup() {
   // put your setup code here, to run once:
 
   oled.begin();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1.
+  //oled.setRotation(0);
   oled.setFont(&cp_437_box_drawing_font);
   datacute();
   oled.on();

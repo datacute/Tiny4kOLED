@@ -52,6 +52,9 @@ bool leftToRight = true;
 void setup() {
   // Send the initialization sequence to the oled. This leaves the display turned off.
   oled.begin();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1.
+  //oled.setRotation(0);
   // This example only uses a single font, so it can be set once here.
   // The characters in the 8x16 font are 8 pixels wide and 16 pixels tall.
   // 2 lines of 16 characters exactly fills 128x32.

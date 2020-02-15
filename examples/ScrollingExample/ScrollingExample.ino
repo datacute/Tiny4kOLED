@@ -31,9 +31,12 @@
 
 void setup() {
   oled.begin();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1.
+  //oled.setRotation(0);
   oled.setFont(FONT6X8);
 
-  // To cear all the memory, clear both rendering frames:
+  // To clear all the memory, clear both rendering frames:
   oled.clear();
   oled.switchRenderFrame();
   oled.clear();

@@ -54,6 +54,9 @@ void setup() {
   // This leaves the screen area being the default for 128x64 screens
   oled.begin(0,0);
   oled.enableChargePump();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1,
+  // but the begin(0,0) method doe not include that initialization.
   oled.setRotation(1);
 
   // In order to use double buffering on the 128x64 screen,

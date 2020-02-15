@@ -39,6 +39,9 @@ void setup() {
 
   // Send the initialization sequence to the oled. This leaves the display turned off
   oled.begin();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1.
+  //oled.setRotation(0);
   // Clear the memory before turning on the display
   oled.clear();
   // Turn on the display

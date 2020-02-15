@@ -32,6 +32,9 @@ void setup() {
   // put your setup code here, to run once:
 
   oled.begin();
+  // Two rotations are supported, 
+  // The begin() method sets the rotation to 1.
+  //oled.setRotation(0);
   oled.clear();
   oled.setFont(&TinyOLED4kfont16x16cn);
   oled.setCursor(10, 1);
