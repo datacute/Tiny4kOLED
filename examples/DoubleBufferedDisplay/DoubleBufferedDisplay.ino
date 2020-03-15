@@ -39,13 +39,25 @@ void setup() {
 
   // Send the initialization sequence to the oled. This leaves the display turned off
   oled.begin();
-  // Two rotations are supported, 
+
+  // Two rotations are supported,
   // The begin() method sets the rotation to 1.
   //oled.setRotation(0);
+
+  // Some newer devices do not contain an external current reference.
+  // Older devices may also support using the internal curret reference,
+  // which provides more consistent brightness across devices.
+  // The internal current reference can be configured as either low current, or high current.
+  // Using true as the parameter value choses the high current internal current reference,
+  // resulting in a brighter display, and a more effective contrast setting.
+  //oled.setInternalIref(true);
+
   // Clear the memory before turning on the display
   oled.clear();
+
   // Turn on the display
   oled.on();
+
   // Switch the half of RAM that we are writing to, to be the half that is non currently displayed
   oled.switchRenderFrame();
 }

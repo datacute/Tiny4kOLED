@@ -433,9 +433,21 @@ void setupPins() {
 
 void setupOLED() {
   oled.begin();
-  // Two rotations are supported, 
+
+  // Two rotations are supported,
   // The begin() method sets the rotation to 1.
   //oled.setRotation(0);
+
+  // Some newer devices do not contain an external current reference.
+  // Older devices may also support using the internal curret reference,
+  // which provides more consistent brightness across devices.
+  // The internal current reference can be configured as either low current, or high current.
+  // Using true as the parameter value choses the high current internal current reference,
+  // resulting in a brighter display, and a more effective contrast setting.
+  //oled.setInternalIref(true);
+
+  // Two fonts are supplied with this library, FONT8X16 and FONT6X8
+  // Other fonts are available from the TinyOLED-Fonts library
   oled.setFont(FONT6X8);
   oled.clear();
   oled.on();

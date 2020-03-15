@@ -53,31 +53,51 @@ void setup() {
   // Initialize the wire library, but do not send any initialization sequence to the oled.
   // This leaves the screen area being the default for 128x64 screens
   oled.begin(0,0);
+
+  // The default state of the SSD1306 does not turn on the internal charge pump
   oled.enableChargePump();
-  // Two rotations are supported, 
+
+  // Two rotations are supported,
   // The begin() method sets the rotation to 1,
   // but the begin(0,0) method doe not include that initialization.
   oled.setRotation(1);
+
+  // Some newer devices do not contain an external current reference.
+  // Older devices may also support using the internal curret reference,
+  // which provides more consistent brightness across devices.
+  // The internal current reference can be configured as either low current, or high current.
+  // Using true as the parameter value choses the high current internal current reference,
+  // resulting in a brighter display, and a more effective contrast setting.
+  //oled.setInternalIref(true);
 
   // In order to use double buffering on the 128x64 screen,
   // the zoom feature needs to be used, which doubles the height
   // of all pixels.
   oled.enableZoomIn();
 
+  // Two fonts are supplied with this library, FONT8X16 and FONT6X8
+  // Other fonts are available from the TinyOLED-Fonts library
   // This example only uses a single font, so it can be set once here.
   // The characters in the 8x16 font are 8 pixels wide and 16 pixels tall.
   // 2 lines of 16 characters exactly fills 128x32.
   oled.setFont(FONT8X16);
+
   // Setup the first half of memory.
   updateDisplay();
+
 #ifndef NO_DOUBLE_BUFFERING
+
   // Switch the half of RAM that we are writing to, to be the half that is non currently displayed.
   oled.switchRenderFrame();
+
   // Setup the second half of memory.
   updateDisplay();
+
   // Switch back to being ready to render on the first frame while displaying the second frame.
   oled.switchFrame();
+
 #endif
+
   // Turn on the display.
   oled.on();
 }
@@ -96,27 +116,34 @@ void loop() {
     }
   }
   updateDisplay();
+
 #ifndef NO_DOUBLE_BUFFERING
+
   // Swap which half of RAM is being written to, and which half is being displayed.
   // This is equivalent to calling both switchRenderFrame and switchDisplayFrame.
   // To see the benefit of double buffering, try this code again with this line commented out.
   oled.switchFrame();
+
 #endif
 }
 
 void updateDisplay() {
   // Clear whatever random data has been left in memory.
   oled.clear();
+
   // Position the text cursor
   // In order to keep the library size small, text can only be positioned
   // with the top of the font aligned with one of the four 8 bit high RAM pages.
   // The Y value therefore can only have the value 0, 1, 2, or 3.
   // usage: oled.setCursor(X IN PIXELS, Y IN ROWS OF 8 PIXELS STARTING WITH 0);
   oled.setCursor(location, 0);
+
   // Write text to oled RAM.
   oled.print(F("ms:"));
+
   // Write the number of milliseconds since power on.
   oled.print(millis());
+
   // Write it again
   oled.setCursor(location, 2);
   oled.print(F("ms:"));

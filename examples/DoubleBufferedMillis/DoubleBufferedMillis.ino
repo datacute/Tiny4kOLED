@@ -52,9 +52,21 @@ bool leftToRight = true;
 void setup() {
   // Send the initialization sequence to the oled. This leaves the display turned off.
   oled.begin();
-  // Two rotations are supported, 
+
+  // Two rotations are supported,
   // The begin() method sets the rotation to 1.
   //oled.setRotation(0);
+
+  // Some newer devices do not contain an external current reference.
+  // Older devices may also support using the internal curret reference,
+  // which provides more consistent brightness across devices.
+  // The internal current reference can be configured as either low current, or high current.
+  // Using true as the parameter value choses the high current internal current reference,
+  // resulting in a brighter display, and a more effective contrast setting.
+  //oled.setInternalIref(true);
+
+  // Two fonts are supplied with this library, FONT8X16 and FONT6X8
+  // Other fonts are available from the TinyOLED-Fonts library
   // This example only uses a single font, so it can be set once here.
   // The characters in the 8x16 font are 8 pixels wide and 16 pixels tall.
   // 2 lines of 16 characters exactly fills 128x32.
