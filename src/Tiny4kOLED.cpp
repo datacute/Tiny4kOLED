@@ -40,6 +40,7 @@ static const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequ
 //	0xD9, 0x22,		// Set pre-charge period
 	0xDA, 0x02,		// Set com pins hardware configuration
 //	0xDB, 0x20,		// --set vcomh 0x20 = 0.77xVcc
+//	0xAD, 0x00,		// Select external IREF. 0x10 or 0x30 for Internal current reference at 19uA or 30uA
 	0x8D, 0x14		// Set DC-DC enable
 };
 
@@ -343,6 +344,14 @@ void SSD1306Device::setInverse(bool enable) {
 		ssd1306_send_command(0xA6);
 }
 
+void SSD1306Device::setExternalIref(void) {
+	ssd1306_send_command2(0xAD, 0x00);
+}
+
+void SSD1306Device::setInternalIref(bool bright) {
+	ssd1306_send_command2(0xAD, ((bright & 0x01) << 5) | 0x10);
+}
+
 void SSD1306Device::off(void) {
 	ssd1306_send_command(0xAE);
 }
@@ -367,6 +376,14 @@ void SSD1306Device::scrollRightOffset(uint8_t startPage, uint8_t interval, uint8
 
 void SSD1306Device::scrollLeftOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset) {
 	ssd1306_send_command6(0x2A, 0x00, startPage, interval, endPage, offset);
+}
+
+void SSD1306Device::scrollContentRight(uint8_t startPage, uint8_t endPage, uint8_t startColumn, uint8_t endColumn) {
+	ssd1306_send_command7(0x2C, 0x00, startPage, 0x01, endPage, startColumn, endColumn);
+}
+
+void SSD1306Device::scrollContentLeft(uint8_t startPage, uint8_t endPage, uint8_t startColumn, uint8_t endColumn) {
+	ssd1306_send_command7(0x2D, 0x00, startPage, 0x01, endPage, startColumn, endColumn);
 }
 
 void SSD1306Device::deactivateScroll(void) {
@@ -418,7 +435,7 @@ void SSD1306Device::setMultiplexRatio(uint8_t mux) {
 }
 
 void SSD1306Device::setComOutputDirection(uint8_t direction) {
-	ssd1306_send_command(0xC0 | ((direction & 0x01)<<3));
+	ssd1306_send_command(0xC0 | ((direction & 0x01) << 3));
 }
 
 void SSD1306Device::setDisplayOffset(uint8_t offset) {
@@ -471,8 +488,8 @@ void SSD1306Device::disableZoomIn(void) {
 
 // Charge Pump Settings
 
-void SSD1306Device::enableChargePump(void) {
-	ssd1306_send_command2(0x8D, 0x14);
+void SSD1306Device::enableChargePump(uint8_t voltage) {
+	ssd1306_send_command2(0x8D, ((voltage | 0x14) & 0xD5));
 }
 
 void SSD1306Device::disableChargePump(void) {

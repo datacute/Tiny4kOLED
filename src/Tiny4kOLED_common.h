@@ -31,6 +31,11 @@ typedef struct {
 #define SSD1306		0x3C	// Slave address
 #endif
 
+#define SSD1306_VOLTAGE_6_0 0x15
+#define SSD1306_VOLTAGE_7_5 0x14
+#define SSD1306_VOLTAGE_8_5 0x94
+#define SSD1306_VOLTAGE_9_0 0x95
+
 // ----------------------------------------------------------------------------
 
 class SSD1306Device: public Print {
@@ -67,6 +72,8 @@ class SSD1306Device: public Print {
 		void setContrast(uint8_t contrast);
 		void setEntireDisplayOn(bool enable);
 		void setInverse(bool enable);
+		void setExternalIref(void);
+		void setInternalIref(bool bright);
 		void off(void);
 		void on(void);
 
@@ -76,6 +83,8 @@ class SSD1306Device: public Print {
 		void scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage);
 		void scrollRightOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset);
 		void scrollLeftOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset);
+		void scrollContentRight(uint8_t startPage, uint8_t endPage, uint8_t startColumn, uint8_t endColumn);
+		void scrollContentLeft(uint8_t startPage, uint8_t endPage, uint8_t startColumn, uint8_t endColumn);
 		void deactivateScroll(void);
 		void activateScroll(void);
 		void setVerticalScrollArea(uint8_t top, uint8_t rows);
@@ -113,7 +122,7 @@ class SSD1306Device: public Print {
 
 		// Charge Pump Settings
 
-		void enableChargePump(void);
+		void enableChargePump(uint8_t voltage = SSD1306_VOLTAGE_7_5);
 		void disableChargePump(void);
 
 		virtual size_t write(byte c);

@@ -39,6 +39,8 @@ setRotation	KEYWORD2
 setContrast	KEYWORD2
 setEntireDisplayOn	KEYWORD2
 setInverse	KEYWORD2
+setExternalIref KEYWORD2
+setInternalIref KEYWORD2
 off	KEYWORD2
 on	KEYWORD2
 #######################################
@@ -48,6 +50,8 @@ scrollRight	KEYWORD2
 scrollLeft	KEYWORD2
 scrollRightOffset	KEYWORD2
 scrollLeftOffset	KEYWORD2
+scrollContentRight	KEYWORD2
+scrollContentLeft	KEYWORD2
 deactivateScroll	KEYWORD2
 activateScroll	KEYWORD2
 setVerticalScrollArea	KEYWORD2
@@ -98,3 +102,7 @@ oled	KEYWORD2
 FONT6X8	LITERAL1
 FONT8X16	LITERAL1
 FONT8X16DIGITS	LITERAL1
+SSD1306_VOLTAGE_6_0	LITERAL1
+SSD1306_VOLTAGE_7_5	LITERAL1
+SSD1306_VOLTAGE_8_5	LITERAL1
+SSD1306_VOLTAGE_9_0	LITERAL1
