@@ -66,6 +66,7 @@ class SSD1306Device: public Print {
 		void endData(void);
 		void setPages(uint8_t pages);
 		void setRotation(uint8_t rotation);
+		void clipText(uint16_t startPixel, uint8_t width, const __FlashStringHelper *text);
 
 		// 1. Fundamental Command Table
 

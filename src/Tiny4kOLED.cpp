@@ -300,6 +300,46 @@ void SSD1306Device::endData(void) {
 	ssd1306_send_stop();
 }
 
+void SSD1306Device::clipText(uint16_t startPixel, uint8_t width, const __FlashStringHelper *text) {
+	uint8_t h = oledFont->height;
+	uint8_t w = oledFont->width;
+	PGM_P p = reinterpret_cast<PGM_P>(text);
+	uint8_t drawnColumns = 0;
+	// It is currently up to the caller to make sure that the startPixel is still within the text.
+	// This method needs to change to read each character in the string up to startPixel, to check for end of string
+	// If beyond the end of the string, write 0s/spaces
+	// However, it probably takes less bytes currently to simply put spaces at the beginning or end of the text.
+	uint16_t charactersToSkip = startPixel / w;
+	uint8_t initialSkip = startPixel % w;
+	p += charactersToSkip;
+	while (drawnColumns < width) {
+		unsigned char c = pgm_read_byte(p++);
+		if (c == 0) break;
+		uint16_t offset = ((uint16_t)c - oledFont->first) * w * h;
+		uint8_t line = h;
+		do
+		{
+			offset += initialSkip;
+			ssd1306_send_data_start();
+			for (uint8_t i = 0; (i < w - initialSkip) && ((drawnColumns + i) < width); i++) {
+				ssd1306_send_data_byte(pgm_read_byte(&(oledFont->bitmap[offset + i])));
+			}
+			offset += w - initialSkip;
+			ssd1306_send_stop();
+			if (h > 1) {
+				if (line > 1) {
+					setCursor(oledX, oledY + 1);
+				}
+				else {
+					setCursor(oledX + w, oledY - (h - 1));
+				}
+			}
+		} while (--line);
+		drawnColumns += w - initialSkip;
+		initialSkip = 0;
+	}
+}
+
 // Double Buffering Commands
 
 void SSD1306Device::switchRenderFrame(void) {
