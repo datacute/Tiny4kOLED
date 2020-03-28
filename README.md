@@ -27,14 +27,48 @@ I have extensively re-written it, with the following changes:
   - Ability to select internal current reference, providing consistent, bright displays. 72x40 displays typically do not include an external current reference.
   - Ability to select the voltage used by the internal charge pump (results in a minor difference in brightness).
   - Ability to horizontally scroll a portion of the display by one pixel (`scrollContentLeft` and `scrollContentRight`).
+- v1.5 Added init sequences and offsets for 128x64, 128x32, 72x40, 64x48, and 64x32 resolution screens.
 
-## 128x64 / 128x32 / 64x48 / 72x40 / 64x32
+## 128x64 / 128x32 / 72x40 / 64x48 / 64x32
 
 The screens with a resolution of 128 by 64 pixels support a feature called 'zoom' where each row is drawn twice. This also only uses half the memory, and so the double buffering technique can be used when the screen is in that mode.
 
 The double buffering technique doesn't have to be used, and library works with SSD1306 screens of different resolutions, however the default init sequence in this library is for a screen with 32 rows of pixel. Custom init sequences can be supplied. An empty init sequence can also be used with `oled.begin(0,0);` so the SSD1306 can be initialized by your own code.
 
-The `clear` and `fill` commands, and the wrapping of lines of text by this library, use the screen's height in `pages` (a `page` is 8 rows of pixels). This library defaults the number of `pages` to 4. For screens with other geometries call the `setPages` method.
+The `clear` and `fill` commands, and the wrapping of lines of text by this library, use the screen's height in `pages` (a `page` is 8 rows of pixels). This library defaults the number of `pages` to 4. For screens with other geometries call the `setPages` method, or use the `begin` settings appropriate for your display.
+
+The following `begin` parameters are supported for the various display resolutions.
+The `b` at the end means `b`right. The `r` at the end means `r`otated.
+
+```c
+    // this is equivalent to tiny4koled_init_128x32r
+    oled.begin();
+
+    oled.begin(128, 64, sizeof(tiny4koled_init_128x64), tiny4koled_init_128x64);
+    oled.begin(128, 64, sizeof(tiny4koled_init_128x64b), tiny4koled_init_128x64b);
+    oled.begin(128, 64, sizeof(tiny4koled_init_128x64r), tiny4koled_init_128x64r);
+    oled.begin(128, 64, sizeof(tiny4koled_init_128x64br), tiny4koled_init_128x64br);
+
+    oled.begin(128, 32, sizeof(tiny4koled_init_128x32), tiny4koled_init_128x32);
+    oled.begin(128, 32, sizeof(tiny4koled_init_128x32b), tiny4koled_init_128x32b);
+    oled.begin(128, 32, sizeof(tiny4koled_init_128x32r), tiny4koled_init_128x32r);
+    oled.begin(128, 32, sizeof(tiny4koled_init_128x32br), tiny4koled_init_128x32br);
+
+    oled.begin(72, 40, sizeof(tiny4koled_init_72x40), tiny4koled_init_72x40);
+    oled.begin(72, 40, sizeof(tiny4koled_init_72x40b), tiny4koled_init_72x40b);
+    oled.begin(72, 40, sizeof(tiny4koled_init_72x40r), tiny4koled_init_72x40r);
+    oled.begin(72, 40, sizeof(tiny4koled_init_72x40br), tiny4koled_init_72x40br);
+
+    oled.begin(64, 48, sizeof(tiny4koled_init_64x48), tiny4koled_init_64x48);
+    oled.begin(64, 48, sizeof(tiny4koled_init_64x48b), tiny4koled_init_64x48b);
+    oled.begin(64, 48, sizeof(tiny4koled_init_64x48r), tiny4koled_init_64x48r);
+    oled.begin(64, 48, sizeof(tiny4koled_init_64x48br), tiny4koled_init_64x48br);
+
+    oled.begin(64, 32, sizeof(tiny4koled_init_64x32), tiny4koled_init_64x32);
+    oled.begin(64, 32, sizeof(tiny4koled_init_64x32b), tiny4koled_init_64x32b);
+    oled.begin(64, 32, sizeof(tiny4koled_init_64x32r), tiny4koled_init_64x32r);
+    oled.begin(64, 32, sizeof(tiny4koled_init_64x32br), tiny4koled_init_64x32br);
+```
 
 ## Example Usage
 

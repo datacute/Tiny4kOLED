@@ -45,6 +45,8 @@ class SSD1306Device: public Print {
 
 		void begin(void);
 		void begin(uint8_t init_sequence_length, const uint8_t init_sequence []);
+		void begin(uint8_t width, uint8_t height, uint8_t init_sequence_length, const uint8_t init_sequence []);
+		void begin(uint8_t xOffset, uint8_t yOffset, uint8_t width, uint8_t height, uint8_t init_sequence_length, const uint8_t init_sequence []);
 		void switchRenderFrame(void);
 		void switchDisplayFrame(void);
 		void switchFrame(void);
@@ -65,6 +67,9 @@ class SSD1306Device: public Print {
 		void clearData(uint8_t length);
 		void endData(void);
 		void setPages(uint8_t pages);
+		void setWidth(uint8_t width);
+		void setHeight(uint8_t height);
+		void setOffset(uint8_t xOffset, uint8_t yOffset);
 		void setRotation(uint8_t rotation);
 		void clipText(uint16_t startPixel, uint8_t width, const __FlashStringHelper *text);
 
@@ -135,5 +140,194 @@ class SSD1306Device: public Print {
 };
 
 // ----------------------------------------------------------------------------
+
+static const uint8_t tiny4koled_init_defaults [] PROGMEM = {	// Initialization Sequence
+	0xAE,			// Display OFF (sleep mode)
+	0x20, 0b10,		// Set Memory Addressing Mode
+					// 00=Horizontal Addressing Mode; 01=Vertical Addressing Mode;
+					// 10=Page Addressing Mode (RESET); 11=Invalid
+	0xB0,			// Set Page Start Address for Page Addressing Mode, 0-7
+	0xC0,			// Set COM Output Scan Direction
+	0x00,			// Set low nibble of column address
+	0x10,			// Set high nibble of column address
+	0x40,			// Set display start line address
+	0x81, 0x7F,		// Set contrast control register
+	0xA0,			// Set Segment Re-map. A0=column 0 mapped to SEG0; A1=column 127 mapped to SEG0.
+	0xA6,			// Set display mode. A6=Normal; A7=Inverse
+	0xA8, 0x3F,		// Set multiplex ratio(1 to 64)
+	0xA4,			// Output RAM to Display
+					// 0xA4=Output follows RAM content; 0xA5,Output ignores RAM content
+	0xD3, 0x00,		// Set display offset. 00 = no offset
+	0xD5, 0x80,		// --set display clock divide ratio/oscillator frequency
+	0xD9, 0x22,		// Set pre-charge period
+	0xDA, 0x00,		// Set com pins hardware configuration
+	0xDB, 0x20,		// --set vcomh 0x20 = 0.77xVcc
+	0xAD, 0x00,		// Select external IREF. 0x10 or 0x30 for Internal current reference at 19uA or 30uA
+	0x8D, 0x10		// Set DC-DC disabled
+};
+
+// Naming configuration for initialisation sequences:
+// tiny4koled_init_{x}x{y}{b}{r}
+// x = width in pixels
+// y = height in pixels
+// b = bright - turns on internal current reference set to the high current setting
+// r = rotated - rotates the display 180 degrees.
+
+// the four combinations of bright and rotated are supported for each of the following resolutions:
+// 128 x 64
+// 128 x 32
+//  72 x 40 (These typically require the use of the internal current refference)
+//  64 x 48
+//  64 x 32
+
+// Initialization sequence for 128 x 64 screen
+static const uint8_t tiny4koled_init_128x64 [] PROGMEM = {
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright 128 x 64 screen
+static const uint8_t tiny4koled_init_128x64b [] PROGMEM = {
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for rotated 128 x 64 screen
+static const uint8_t tiny4koled_init_128x64r [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright rotated 128 x 64 screen
+static const uint8_t tiny4koled_init_128x64br [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for 128 x 32 screen
+static const uint8_t tiny4koled_init_128x32 [] PROGMEM = {
+	0xA8, 0x1F,		// Set multiplex ratio(1 to 64)
+	0xDA, 0x02,		// Set com pins hardware configuration
+	0x8D, 0x14		// Set DC-DC enable
+};
+
+// Initialization sequence for bright 128 x 32 screen
+static const uint8_t tiny4koled_init_128x32b [] PROGMEM = {
+	0xA8, 0x1F,		// Set multiplex ratio(1 to 64)
+	0xDA, 0x02,		// Set com pins hardware configuration
+	0xAD, 0x30,		// Select external IREF. 0x10 or 0x30 for Internal current reference at 19uA or 30uA
+	0x8D, 0x14		// Set DC-DC enable
+};
+
+// Initialization sequence for rotated 128 x 32 screen
+static const uint8_t tiny4koled_init_128x32r [] PROGMEM = {
+	0xC8,			// Set COM Output Scan Direction
+	0xA1,			// Set Segment Re-map. A0=column 0 mapped to SEG0; A1=column 127 mapped to SEG0.
+	0xA8, 0x1F,		// Set multiplex ratio(1 to 64)
+	0xDA, 0x02,		// Set com pins hardware configuration
+	0x8D, 0x14		// Set DC-DC enable
+};
+
+// Initialization sequence for bright rotated 128 x 32 screen
+static const uint8_t tiny4koled_init_128x32br [] PROGMEM = {
+	0xC8,			// Set COM Output Scan Direction
+	0xA1,			// Set Segment Re-map. A0=column 0 mapped to SEG0; A1=column 127 mapped to SEG0.
+	0xA8, 0x1F,		// Set multiplex ratio(1 to 64)
+	0xDA, 0x02,		// Set com pins hardware configuration
+	0xAD, 0x30,		// Select external IREF. 0x10 or 0x30 for Internal current reference at 19uA or 30uA
+	0x8D, 0x14		// Set DC-DC enable
+};
+
+// Initialization sequence for 72 x 40 screen
+static const uint8_t tiny4koled_init_72x40 [] PROGMEM = {
+	0xA8, 0x27,   // Set multiplex ratio(1 to 64)
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright 72 x 40 screen
+static const uint8_t tiny4koled_init_72x40b [] PROGMEM = {
+	0xA8, 0x27,   // Set multiplex ratio(1 to 64)
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for rotated 72 x 40 screen
+static const uint8_t tiny4koled_init_72x40r [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA8, 0x27,   // Set multiplex ratio(1 to 64)
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright rotated 72 x 40 screen
+static const uint8_t tiny4koled_init_72x40br [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA8, 0x27,   // Set multiplex ratio(1 to 64)
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for 64 x 48 screen
+static const uint8_t tiny4koled_init_64x48 [] PROGMEM = {
+	0xA8, 0x2F,   // Set multiplex ratio(1 to 64)
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright 64 x 48 screen
+static const uint8_t tiny4koled_init_64x48b [] PROGMEM = {
+	0xA8, 0x2F,   // Set multiplex ratio(1 to 64)
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for rotated 64 x 48 screen
+static const uint8_t tiny4koled_init_64x48r [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA8, 0x2F,   // Set multiplex ratio(1 to 64)
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright rotated 64 x 48 screen
+static const uint8_t tiny4koled_init_64x48br [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA8, 0x2F,   // Set multiplex ratio(1 to 64)
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for 64 x 32 screen
+static const uint8_t tiny4koled_init_64x32 [] PROGMEM = {
+	0xA8, 0x1F,   // Set multiplex ratio(1 to 64)
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright 64 x 32 screen
+static const uint8_t tiny4koled_init_64x32b [] PROGMEM = {
+	0xA8, 0x1F,   // Set multiplex ratio(1 to 64)
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for rotated 64 x 32 screen
+static const uint8_t tiny4koled_init_64x32r [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA8, 0x1F,   // Set multiplex ratio(1 to 64)
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
+
+// Initialization sequence for bright rotated 64 x 32 screen
+static const uint8_t tiny4koled_init_64x32br [] PROGMEM = {
+	0xC8,         // Set COM Output Scan Direction
+	0xA1,         // Set Segment Re-map. A0=address mapped; A1=address 127 mapped.
+	0xA8, 0x1F,   // Set multiplex ratio(1 to 64)
+	0xAD, 0x30,   // Select internal IREF and higher current
+	0x8D, 0x14    // Set DC-DC enable 7.5V (We can't see the screen without the charge pump on)
+};
 
 #endif

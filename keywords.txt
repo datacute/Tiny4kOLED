@@ -32,6 +32,9 @@ repeatData	KEYWORD2
 clearData	KEYWORD2
 endData	KEYWORD2
 setPages	KEYWORD2
+setWidth	KEYWORD2
+setHeight	KEYWORD2
+setOffset	KEYWORD2
 setRotation	KEYWORD2
 clipText	KEYWORD2
 #######################################
