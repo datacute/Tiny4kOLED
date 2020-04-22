@@ -29,8 +29,13 @@
 
 #include <Tiny4kOLED.h>
 
-const char textToScrollData[] PROGMEM = { "This is an example of scrolling text" };
-const __FlashStringHelper * textToScroll = (__FlashStringHelper*)textToScrollData;
+// The F macro is not able to be used 
+// The following two lines place a string in flash memory,
+// and get a reference to it as though it had been created as
+// F("This is an example of scrolling text. ")
+const char textToScrollData[] PROGMEM = { "This is an example of scrolling text. " };
+DATACUTE_F_MACRO_T * textToScroll = FPSTR(textToScrollData);
+
 uint16_t nextRowOfTextToDraw;
 
 void setup() {
@@ -91,7 +96,7 @@ void loop() {
   // sizeof(textToScrollData) is 1 byte longer than the text
   // (in includes the end of string marker)
   // The font width is 8 pixels
-  if (nextRowOfTextToDraw >= sizeof(textToScrollData) * 8) {
+  if (nextRowOfTextToDraw >= (sizeof(textToScrollData) - 1) * 8) {
     nextRowOfTextToDraw = 0;
   }
 

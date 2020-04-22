@@ -305,7 +305,7 @@ void SSD1306Device::endData(void) {
 	ssd1306_send_stop();
 }
 
-void SSD1306Device::clipText(uint16_t startPixel, uint8_t width, const __FlashStringHelper *text) {
+void SSD1306Device::clipText(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text) {
 	uint8_t h = oledFont->height;
 	uint8_t w = oledFont->width;
 	PGM_P p = reinterpret_cast<PGM_P>(text);

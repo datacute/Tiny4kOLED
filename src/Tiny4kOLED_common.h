@@ -38,6 +38,26 @@ typedef struct {
 
 // ----------------------------------------------------------------------------
 
+// Spence Konde's ATTinyCore defines the F macro as
+// #define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(PSTR(string_literal)))
+
+// Digistump uses
+// # define F(s) ((fstr_t*)PSTR(s))
+
+#ifndef DATACUTE_F_MACRO_T
+#ifdef AVR_DIGISPARK
+#define DATACUTE_F_MACRO_T fstr_t
+#else
+#define DATACUTE_F_MACRO_T const __FlashStringHelper
+#endif
+#endif
+
+#ifndef FPSTR
+#define FPSTR(pstr_pointer) (reinterpret_cast<DATACUTE_F_MACRO_T *>(pstr_pointer))
+#endif
+
+// ----------------------------------------------------------------------------
+
 class SSD1306Device: public Print {
 
 	public:
@@ -71,7 +91,7 @@ class SSD1306Device: public Print {
 		void setHeight(uint8_t height);
 		void setOffset(uint8_t xOffset, uint8_t yOffset);
 		void setRotation(uint8_t rotation);
-		void clipText(uint16_t startPixel, uint8_t width, const __FlashStringHelper *text);
+		void clipText(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text);
 
 		// 1. Fundamental Command Table
 
