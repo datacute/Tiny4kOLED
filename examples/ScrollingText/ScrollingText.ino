@@ -29,10 +29,12 @@
 
 #include <Tiny4kOLED.h>
 
-// The F macro is not able to be used 
+// The F macro is not able to be used outside of methods.
 // The following two lines place a string in flash memory,
 // and get a reference to it as though it had been created as
 // F("This is an example of scrolling text. ")
+// while also allowing sizeof(textToScrollData) to return
+// the length of the string (including the null terminating character).
 const char textToScrollData[] PROGMEM = { "This is an example of scrolling text. " };
 DATACUTE_F_MACRO_T * textToScroll = FPSTR(textToScrollData);
 
