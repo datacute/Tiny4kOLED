@@ -11,39 +11,46 @@
 #include <TinyWireM.h>  // Version with buffer bugfix: https://github.com/adafruit/TinyWireM
 #include "Tiny4kOLED_common.h"
 
-static bool tinywirem_beginTransmission(void);
-static uint8_t tinywirem_endTransmission(void);
+#ifndef DATACUTE_I2C_TINYWIREM
+#define DATACUTE_I2C_TINYWIREM
+
+static bool datacute_write_tinywirem(uint8_t byte) {
+	return TinyWireM.write(byte);
+}
+
+static uint8_t datacute_read_tinywirem(void) __attribute__((unused));
+static uint8_t datacute_read_tinywirem(void) {
+	return TinyWireM.read();
+}
+
+static uint8_t datacute_endTransmission_tinywirem(void) {
+	return TinyWireM.endTransmission();
+}
+
+#endif
+
+static bool tiny4koled_beginTransmission_tinywirem(void) {
+	TinyWireM.beginTransmission(SSD1306);
+	return true;
+}
 
 #ifndef TINY4KOLED_QUICK_BEGIN
-static bool check (void) {
+static bool tiny4koled_check_tinywirem(void) {
 	const uint8_t noError = 0x00;
-	tinywirem_beginTransmission();
-	return (tinywirem_endTransmission()==noError);
+	tiny4koled_beginTransmission_tinywirem();
+	return (datacute_endTransmission_tinywirem()==noError);
 }
 #endif
 
-static void tinywirem_begin(void) {
+static void tiny4koled_begin_tinywirem(void) {
 	TinyWireM.begin();
 #ifndef TINY4KOLED_QUICK_BEGIN
-	while (!check()) {
+	while (!tiny4koled_check_tinywirem()) {
 		delay(10);
 	}
 #endif
 }
 
-static bool tinywirem_beginTransmission(void) {
-	TinyWireM.beginTransmission(SSD1306);
-	return true;
-}
-
-static bool tinywirem_write(uint8_t byte) {
-	return TinyWireM.write(byte);
-}
-
-static uint8_t tinywirem_endTransmission(void) {
-	return TinyWireM.endTransmission();
-}
-
-SSD1306Device oled(&tinywirem_begin, &tinywirem_beginTransmission, &tinywirem_write, &tinywirem_endTransmission);
+SSD1306Device oled(&tiny4koled_begin_tinywirem, &tiny4koled_beginTransmission_tinywirem, &datacute_write_tinywirem, &datacute_endTransmission_tinywirem);
 
 #endif
