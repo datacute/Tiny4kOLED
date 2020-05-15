@@ -45,7 +45,7 @@ typedef struct {
 // # define F(s) ((fstr_t*)PSTR(s))
 
 #ifndef DATACUTE_F_MACRO_T
-#ifdef AVR_DIGISPARK
+#ifdef ARDUINO_AVR_DIGISPARK
 #define DATACUTE_F_MACRO_T fstr_t
 #else
 #define DATACUTE_F_MACRO_T const __FlashStringHelper
