@@ -180,7 +180,7 @@ static const uint8_t tiny4koled_init_defaults [] PROGMEM = {	// Initialization S
 	0xD3, 0x00,		// Set display offset. 00 = no offset
 	0xD5, 0x80,		// --set display clock divide ratio/oscillator frequency
 	0xD9, 0x22,		// Set pre-charge period
-	0xDA, 0x00,		// Set com pins hardware configuration
+	0xDA, 0x12,		// Set com pins hardware configuration
 	0xDB, 0x20,		// --set vcomh 0x20 = 0.77xVcc
 	0xAD, 0x00,		// Select external IREF. 0x10 or 0x30 for Internal current reference at 19uA or 30uA
 	0x8D, 0x10		// Set DC-DC disabled
