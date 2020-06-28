@@ -4,11 +4,14 @@
  * Based on ssd1306xled, re-written and extended by Stephen Denne
  * from 2017-04-25 at https://github.com/datacute/Tiny4kOLED
  *
+ * This file adds support for the I2C implementation from https://github.com/adafruit/TinyWireM
+ * Adafruit's version has a buffer overrun bugfix.
+ * The bug resulted in the appearance of extra dots onscreen.
  */
 #ifndef TINY4KOLED_TINYWIREM_H
 #define TINY4KOLED_TINYWIREM_H
 
-#include <TinyWireM.h>  // Version with buffer bugfix: https://github.com/adafruit/TinyWireM
+#include <TinyWireM.h>
 #include "Tiny4kOLED_common.h"
 
 #ifndef DATACUTE_I2C_TINYWIREM

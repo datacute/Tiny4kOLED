@@ -4,6 +4,8 @@
  * Based on ssd1306xled, re-written and extended by Stephen Denne
  * from 2017-04-25 at https://github.com/datacute/Tiny4kOLED
  *
+ * This file adds support for the I2C implementation from https://github.com/technoblogy/tiny-i2c
+ *
  */
 #ifndef TINY4KOLED_TINYI2C_H
 #define TINY4KOLED_TINYI2C_H
