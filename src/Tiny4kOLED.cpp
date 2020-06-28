@@ -407,12 +407,12 @@ void SSD1306Device::on(void) {
 
 // 2. Scrolling Command Table
 
-void SSD1306Device::scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage) {
-	ssd1306_send_command7(0x26, 0x00, startPage + oledOffsetY, interval, endPage + oledOffsetY, 0x00, 0xFF);
+void SSD1306Device::scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t startColumn, uint8_t endColumn) {
+	ssd1306_send_command7(0x26, 0x00, startPage + oledOffsetY, interval, endPage + oledOffsetY, startColumn, endColumn);
 }
 
-void SSD1306Device::scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage) {
-	ssd1306_send_command7(0x27, 0x00, startPage + oledOffsetY, interval, endPage + oledOffsetY, 0x00, 0xFF);
+void SSD1306Device::scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t startColumn, uint8_t endColumn) {
+	ssd1306_send_command7(0x27, 0x00, startPage + oledOffsetY, interval, endPage + oledOffsetY, startColumn, endColumn);
 }
 
 void SSD1306Device::scrollRightOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset) {

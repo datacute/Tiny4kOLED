@@ -106,8 +106,8 @@ class SSD1306Device: public Print {
 
 		// 2. Scrolling Command Table
 
-		void scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage);
-		void scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage);
+		void scrollRight(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t startColumn = 0x00, uint8_t endColumn = 0xFF);
+		void scrollLeft(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t startColumn = 0x00, uint8_t endColumn = 0xFF);
 		void scrollRightOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset);
 		void scrollLeftOffset(uint8_t startPage, uint8_t interval, uint8_t endPage, uint8_t offset);
 		void scrollContentRight(uint8_t startPage, uint8_t endPage, uint8_t startColumn, uint8_t endColumn);
