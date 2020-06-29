@@ -25,6 +25,11 @@ static uint8_t datacute_read_tinyi2c(void) {
 	return TinyI2C.read();
 }
 
+static void datacute_end_read_tinyi2c(void) __attribute__((unused));
+static void datacute_end_read_tinyi2c(void) {
+	TinyI2C.stop();
+}
+
 static uint8_t datacute_endTransmission_tinyi2c(void) {
 	TinyI2C.stop();
 	return 0;

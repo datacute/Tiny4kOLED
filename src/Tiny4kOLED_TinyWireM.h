@@ -26,6 +26,9 @@ static uint8_t datacute_read_tinywirem(void) {
 	return TinyWireM.read();
 }
 
+static void datacute_end_read_tinywirem(void) __attribute__((unused));
+static void datacute_end_read_tinywirem(void) {}
+
 static uint8_t datacute_endTransmission_tinywirem(void) {
 	return TinyWireM.endTransmission();
 }

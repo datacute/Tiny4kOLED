@@ -23,6 +23,9 @@ static uint8_t datacute_read_wire(void) {
 	return Wire.read();
 }
 
+static void datacute_end_read_wire(void) __attribute__((unused));
+static void datacute_end_read_wire(void) {}
+
 static uint8_t datacute_endTransmission_wire(void) {
 	return Wire.endTransmission();
 }
