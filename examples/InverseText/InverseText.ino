@@ -46,7 +46,8 @@ void setup() {
 
   // Two fonts are supplied with this library, FONT8X16 and FONT6X8
   // Other fonts are available from the TinyOLED-Fonts library
-  oled.setFont(FONT8X16);
+  oled.setFont(FONT6X8);
+  oled.clear();
   oled.on();
 }
 
@@ -57,19 +58,20 @@ void loop() {
     oled.println("Normal");
     delay(500);
 
-    oled.println("Invers");
     oled.invertOutput(true);
+    oled.print("Inverse");
+    oled.clearToEOL();
     delay(500);
 
     for (;;)
     {
-        oled.setCursor(0, 3);
+        oled.setCursor(0, 2);
         oled.invertOutput(true);
         oled.print(" ");
 
         delay(500);
 
-        oled.setCursor(0, 3);
+        oled.setCursor(0, 2);
         oled.invertOutput(false);
         oled.print(" ");
 
