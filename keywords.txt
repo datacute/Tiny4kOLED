@@ -37,6 +37,7 @@ setHeight	KEYWORD2
 setOffset	KEYWORD2
 setRotation	KEYWORD2
 clipText	KEYWORD2
+invertOutput	KEYWORD2
 #######################################
 # SSD1306 1. Fundamental Command Table (KEYWORD2)
 #######################################
