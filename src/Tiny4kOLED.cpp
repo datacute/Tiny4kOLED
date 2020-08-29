@@ -214,10 +214,8 @@ size_t SSD1306Device::write(byte c) {
 	if (!oledFont)
 		return 1;
 
-	if (c == '\r') {
-		setCursor(0, oledY);
+	if (c == '\r')
 		return 1;
-	}
 	
 	uint8_t h = oledFont->height;
 
