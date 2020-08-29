@@ -93,7 +93,7 @@ class SSD1306Device: public Print {
 		void setOffset(uint8_t xOffset, uint8_t yOffset);
 		void setRotation(uint8_t rotation);
 		void clipText(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text);
-	        void invertOutput(bool enable);
+		void invertOutput(bool enable);
 
 		// 1. Fundamental Command Table
 

@@ -24,7 +24,7 @@ static uint8_t oledPages = SSD1306_PAGES;
 static const DCfont *oledFont = 0;
 static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
-static uint8_t invertOutput = 0;
+static uint8_t invertedOutput = 0;
 
 static void (*wireBeginFn)(void);
 static bool (*wireBeginTransmissionFn)(void);
@@ -66,10 +66,10 @@ static void ssd1306_send_command_byte(uint8_t byte) {
 }
 
 static void ssd1306_send_data_byte(uint8_t byte) {
-	if (ssd1306_send_byte(byte^invertOutput) == 0) {
+	if (ssd1306_send_byte(byte^invertedOutput) == 0) {
 		ssd1306_send_stop();
 		ssd1306_send_data_start();
-		ssd1306_send_byte(byte^invertOutput);
+		ssd1306_send_byte(byte^invertedOutput);
 	}
 }
 
@@ -309,7 +309,7 @@ void SSD1306Device::endData(void) {
 }
 
 void SSD1306Device::invertOutput(bool enable) {
-	invertOutput = enable ? 0xff : 0;
+	invertedOutput = enable ? 0xff : 0;
 }	
 
 void SSD1306Device::clipText(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text) {
