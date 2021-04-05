@@ -29,7 +29,9 @@ I have extensively re-written it, with the following changes:
   - Ability to horizontally scroll a portion of the display by one pixel (`scrollContentLeft` and `scrollContentRight`).
 - v1.5 Added init sequences and offsets for 128x64, 128x32, 72x40, 64x48, and 64x32 resolution screens.
 
-You can tinker with the examples provided here on Wokwi Arduino simulator
+## Online Simulator
+
+The Wokwi Online Arduino Simulator has quite good support for the core features of the 128x64 SSD1306. Here are links to some of the Tiny4kOLED examples:
 - [Bitmap Example](https://wokwi.com/arduino/projects/293572291729555977)
 - [CustomChinesefont](https://wokwi.com/arduino/projects/293572501640839688)
 - [DatacuteBoxyFont](https://wokwi.com/arduino/projects/293573051240415757)
@@ -37,6 +39,7 @@ You can tinker with the examples provided here on Wokwi Arduino simulator
 - [Devices-128x64](https://wokwi.com/arduino/projects/293574465813479944)
 - [Features](https://wokwi.com/arduino/projects/293575386210501128)
 - [DoubleBufferedDisplay](https://wokwi.com/arduino/projects/293575569494245901)
+
 ## 128x64 / 128x32 / 72x40 / 64x48 / 64x32
 
 The screens with a resolution of 128 by 64 pixels support a feature called 'zoom' where each row is drawn twice. This also only uses half the memory, and so the double buffering technique can be used when the screen is in that mode.
