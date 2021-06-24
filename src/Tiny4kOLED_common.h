@@ -11,19 +11,49 @@
 #ifndef TINY4KOLEDCOMMON_H
 #define TINY4KOLEDCOMMON_H
 
-typedef struct {
+typedef struct DCfont {
 	uint8_t *bitmap;      // character bitmaps data
 	uint8_t width;        // character width in pixels
 	uint8_t height;       // character height in pages (8 pixels)
-	uint8_t first, last;  // ASCII extents
+	uint8_t first, last;  // the lower byte of the unicode block range
+	// If width above is 0, then that indicates a proportional font
+	uint16_t *widths16s;
+	uint8_t *widths;
+	uint8_t spacing;      // number of blank columns of pixels to write between characters
 } DCfont;
 
-// Two included fonts, The space isn't used unless it is needed
+// Unicode Blocks are NOT bits 8 to 15 of the codepoint, but this library pretends that they are.
+typedef struct DCUnicodeFontRef {
+	uint8_t unicode_plane; // the unicode plane number
+	uint8_t unicode_block; // the upper byte of the unicode block
+	const DCfont *font; // font glyphs within this unicode block
+} DCUnicodeFontRef;
+
+typedef struct DCUnicodeFont {
+	uint8_t space_width; // the width of the space character, which does not need to be included in the font glyphs.
+	uint8_t num_fonts; // number of character ranges in this unicode font
+	const DCUnicodeFontRef * fonts; // the font references
+} DCUnicodeFont;
+
+union DCUnicodeCodepoint {
+    uint32_t codepoint;
+    struct {
+        uint8_t offset;
+        uint8_t block;
+        uint8_t plane;
+        uint8_t unused;
+    } unicode;
+};
+
+// included fonts, The space isn't used unless it is needed
 #include "font6x8.h"
+#include "font6x8p.h"
 #include "font6x8digits.h"
 #include "font6x8caps.h"
 #include "font8x16.h"
+#include "font8x16p.h"
 #include "font8x16caps.h"
+#include "font8x16capsp.h"
 #include "font8x16digits.h"
 
 // ----------------------------------------------------------------------------
@@ -74,13 +104,27 @@ class SSD1306Device: public Print {
 		uint8_t currentRenderFrame(void);
 		uint8_t currentDisplayFrame(void);
 		void setFont(const DCfont *font);
+		void setUnicodeFont(const DCUnicodeFont *unicode_font);
+		// If your code does not call oled.print then you can save space by calling setFontOnly instead of the above.
+		void setFontOnly(const DCfont *font);
+		void setSpacing(uint8_t spacing);
+		uint8_t getExpectedUtf8Bytes(void);
+		uint16_t getCharacterDataOffset(byte c);
+		uint8_t getCharacterWidth(byte c);
+		uint16_t getTextWidth(DATACUTE_F_MACRO_T *text);
 		void setCursor(uint8_t x, uint8_t y);
+		uint8_t getCursorX();
+		uint8_t getCursorY();
 		void newLine();
 		void fill(uint8_t fill);
 		void fillToEOL(uint8_t fill);
 		void fillLength(uint8_t fill, uint8_t length);
 		void clear(void);
 		void clearToEOL(void);
+		void printDoubleSize(DATACUTE_F_MACRO_T *text);
+		void printDoubleSize(uint8_t c);
+		void printDoubleSizeSmooth(DATACUTE_F_MACRO_T *text);
+		void printDoubleSizeSmooth(uint8_t c);
 		void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const uint8_t bitmap[]);
 		void startData(void);
 		void sendData(const uint8_t data);
@@ -93,6 +137,7 @@ class SSD1306Device: public Print {
 		void setOffset(uint8_t xOffset, uint8_t yOffset);
 		void setRotation(uint8_t rotation);
 		void clipText(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text);
+		void clipTextP(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text);
 		void invertOutput(bool enable);
 
 		// 1. Fundamental Command Table
@@ -158,6 +203,12 @@ class SSD1306Device: public Print {
 
 	private:
 		void newLine(uint8_t fontHeight);
+		size_t writeAsciiInternal(byte c);
+		size_t writeCommonInternal(byte c);
+		size_t writeUtf8Internal(byte c);
+		bool SelectUnicodeBlock(void);
+		size_t WriteUnicodeCharacter(void);
+		void sendDoubleBits(uint32_t doubleBits);
 
 };
 
