@@ -54,6 +54,10 @@ static void tiny4koled_begin_wire(void) {
 #endif
 }
 
+#ifndef TINY4KOLED_NO_PRINT
+SSD1306PrintDevice oled(&tiny4koled_begin_wire, &tiny4koled_beginTransmission_wire, &datacute_write_wire, &datacute_endTransmission_wire);
+#else
 SSD1306Device oled(&tiny4koled_begin_wire, &tiny4koled_beginTransmission_wire, &datacute_write_wire, &datacute_endTransmission_wire);
+#endif
 
 #endif

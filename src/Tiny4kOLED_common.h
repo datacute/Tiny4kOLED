@@ -89,7 +89,7 @@ union DCUnicodeCodepoint {
 
 // ----------------------------------------------------------------------------
 
-class SSD1306Device: public Print {
+class SSD1306Device {
 
 	public:
 		SSD1306Device(void (*wireBeginFunc)(void), bool (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), uint8_t (*wireEndTransmissionFunc)(void));
@@ -198,8 +198,7 @@ class SSD1306Device: public Print {
 		void enableChargePump(uint8_t voltage = SSD1306_VOLTAGE_7_5);
 		void disableChargePump(void);
 
-		virtual size_t write(byte c);
-		using Print::write;
+		size_t write(byte c);
 
 	private:
 		void newLine(uint8_t fontHeight);
@@ -210,6 +209,16 @@ class SSD1306Device: public Print {
 		size_t WriteUnicodeCharacter(void);
 		void sendDoubleBits(uint32_t doubleBits);
 
+};
+
+class SSD1306PrintDevice: public Print, public SSD1306Device {
+	public:
+		SSD1306PrintDevice(void (*wireBeginFunc)(void), bool (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), uint8_t (*wireEndTransmissionFunc)(void)) : 
+			SSD1306Device(wireBeginFunc, wireBeginTransmissionFunc, wireWriteFunc, wireEndTransmissionFunc) {};
+		size_t write(byte c) {
+			return SSD1306Device::write(c);
+		};
+		using Print::write;
 };
 
 // ----------------------------------------------------------------------------
