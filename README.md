@@ -1,6 +1,6 @@
 # Tiny4kOLED
 
-This is a library for an ATTiny85 to use an SSD1306 powered, double buffered, 128x32 pixel OLED, over I<sup>2</sup>C.
+This is a library for an ATTiny85 to use an SSD1306 powered, 128x64 pixel OLED, over I<sup>2</sup>C, with double buffering support for the common 128x32 sized screen.
 
 The SSD1306 has enough RAM to support a 128 by 64 pixel display, and most SSD1306 controlled OLEDs are 128 by 64 pixels. However there are also other display sizes available. With a 128 by 32 pixel display, only half of the SSD1306's RAM is used, and the other half can be used as a frame buffer. This results in being able to have a slow ATTiny85 gradually update the display, then switch it into view when it is ready.
 
@@ -28,6 +28,12 @@ I have extensively re-written it, with the following changes:
   - Ability to select the voltage used by the internal charge pump (results in a minor difference in brightness).
   - Ability to horizontally scroll a portion of the display by one pixel (`scrollContentLeft` and `scrollContentRight`).
 - v1.5 Added init sequences and offsets for 128x64, 128x32, 72x40, 64x48, and 64x32 resolution screens.
+- v2.0 Extended the format used for fonts, adding support for:
+  - Proportional fonts.
+  - Multiple font subsets and unicode ranges.
+  - UTF-8 encoded strings.
+  - Printing double size text, with and without smoothing.
+  - Option to reduce memory usage if print functions are not required.
 
 ## Online Simulator
 
@@ -79,6 +85,14 @@ The `b` at the end means `b`right. The `r` at the end means `r`otated.
     oled.begin(64, 32, sizeof(tiny4koled_init_64x32b), tiny4koled_init_64x32b);
     oled.begin(64, 32, sizeof(tiny4koled_init_64x32r), tiny4koled_init_64x32r);
     oled.begin(64, 32, sizeof(tiny4koled_init_64x32br), tiny4koled_init_64x32br);
+```
+
+The SSD1306 remembers many of its settings even when powered off. After experimenting with various features, it can be useful to reset all the settings to the default values, which can be done with the following initialization sequence (Note: by default the charge pump is turned off):
+
+```c
+    oled.begin(128, 64, sizeof(tiny4koled_init_defaults), tiny4koled_init_defaults);
+    oled.enableChargePump(); // The default is off, but most boards need this.
+    oled.setRotation(1);     // The default orientation is not the most commonly used.
 ```
 
 ## Example Usage
