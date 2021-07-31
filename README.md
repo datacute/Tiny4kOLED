@@ -38,6 +38,7 @@ I have extensively re-written it, with the following changes:
 ## Online Simulator
 
 The Wokwi Online Arduino Simulator has quite good support for the core features of the 128x64 SSD1306. Here are links to some of the Tiny4kOLED examples:
+
 - [Bitmap Example](https://wokwi.com/arduino/projects/293572291729555977)
 - [CustomChinesefont](https://wokwi.com/arduino/projects/293572501640839688)
 - [DatacuteBoxyFont](https://wokwi.com/arduino/projects/293573051240415757)
