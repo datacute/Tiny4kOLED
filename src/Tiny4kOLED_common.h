@@ -108,6 +108,7 @@ class SSD1306Device {
 		// If your code does not call oled.print then you can save space by calling setFontOnly instead of the above.
 		void setFontOnly(const DCfont *font);
 		void setSpacing(uint8_t spacing);
+		void setCombineFunction(uint8_t (*combineFunc)(uint8_t, uint8_t, uint8_t));
 		uint8_t getExpectedUtf8Bytes(void);
 		uint16_t getCharacterDataOffset(byte c);
 		uint8_t getCharacterWidth(byte c);

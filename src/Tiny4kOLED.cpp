@@ -26,7 +26,6 @@ static uint8_t unicodeFontNum = 0;
 static const DCfont *oledFont = 0;
 static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
-static uint8_t invertedOutput = 0;
 static uint8_t characterSpacing = 0;
 static DCUnicodeCodepoint unicodeCodepoint = { 0 };
 static uint8_t utf8Continuation = 0;
@@ -37,6 +36,8 @@ static bool (*wireWriteFn)(uint8_t byte);
 static uint8_t (*wireEndTransmissionFn)(void);
 
 static size_t (SSD1306Device::* writeFn)(byte c) = 0;
+static uint8_t (*combineFn)(uint8_t x, uint8_t y, uint8_t b) = 0;
+static uint8_t writesSinceSetCursor = 0;
 
 static void ssd1306_begin(void) {
 	wireBeginFn();
@@ -73,11 +74,13 @@ static void ssd1306_send_command_byte(uint8_t byte) {
 }
 
 static void ssd1306_send_data_byte(uint8_t byte) {
-	if (ssd1306_send_byte(byte^invertedOutput) == 0) {
+	if (combineFn) byte = (*combineFn)(oledX + writesSinceSetCursor, oledY, byte);
+	if (ssd1306_send_byte(byte) == 0) {
 		ssd1306_send_stop();
 		ssd1306_send_data_start();
-		ssd1306_send_byte(byte^invertedOutput);
+		ssd1306_send_byte(byte);
 	}
+	writesSinceSetCursor++;
 }
 
 static void ssd1306_send_command(uint8_t command) {
@@ -122,6 +125,10 @@ static void ssd1306_send_command7(uint8_t command1, uint8_t command2, uint8_t co
 	ssd1306_send_byte(command6);
 	ssd1306_send_byte(command7);
 	ssd1306_send_stop();
+}
+
+static uint8_t invertByte(uint8_t x, uint8_t y, uint8_t byte) {
+	return byte ^ 0xff;
 }
 
 SSD1306Device::SSD1306Device(void (*wireBeginFunc)(void), bool (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), uint8_t (*wireEndTransmissionFunc)(void)) {
@@ -207,6 +214,10 @@ void SSD1306Device::setSpacing(uint8_t spacing) {
 	characterSpacing = spacing;
 }
 
+void SSD1306Device::setCombineFunction(uint8_t (*combineFunc)(uint8_t, uint8_t, uint8_t)) {
+	combineFn = combineFunc;
+}
+
 uint16_t SSD1306Device::getCharacterDataOffset(uint8_t c) {
 	uint16_t c_index = (uint16_t)c - oledFont->first;
 	if (c_index == 0) return 0;
@@ -258,6 +269,7 @@ void SSD1306Device::setCursor(uint8_t x, uint8_t y) {
 	ssd1306_send_command3(renderingFrame | ((y + oledOffsetY) & 0x07), 0x10 | (((x + oledOffsetX) & 0xf0) >> 4), (x + oledOffsetX) & 0x0f);
 	oledX = x;
 	oledY = y;
+	writesSinceSetCursor = 0;
 }
 
 uint8_t SSD1306Device::getCursorX() {
@@ -593,7 +605,7 @@ void SSD1306Device::endData(void) {
 }
 
 void SSD1306Device::invertOutput(bool enable) {
-	invertedOutput = enable ? 0xff : 0;
+	combineFn = enable ? &invertByte : NULL;
 }	
 
 void SSD1306Device::clipText(uint16_t startPixel, uint8_t width, DATACUTE_F_MACRO_T *text) {
