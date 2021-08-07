@@ -1,10 +1,13 @@
 /* 
  * Power Monitor
  * 
- * Displays a visualisation of the battery level.
+ * Records the power supply voltage every hour, logged in EEPROM.
+ * When a button is pressed the last voltage is displayed in a large font.
+ * A graph of the last five days readings is shown over the readout.
+ * The graph's y axis range is from 0 to 6 volts.
  * 
  * When using Spence Konde's ATTinyCore https://github.com/SpenceKonde/ATTinyCore
- * and using a chip without Optiboot, with LTO enabled, this sketch takes 5758 bytes of flash.
+ * and using a chip without Optiboot, with LTO enabled, this sketch takes 5782 bytes of flash.
  * 
  * The battery level is measured roughly every hour
  * and the measured voltages are stored in EEPROM
@@ -12,11 +15,20 @@
  * When a button is pressed, the display shows a graph of the latest readings.
  * 
  * Power on:
- * set up buttons
- * Display current screen
- * turn on screen
+ * check eeprom is set up to record log of voltages
+ * record current voltage
+ * set up wake up interupts on button press and watch dog timer
+ * set up the screen and display the graph and latest voltage
  * Go to sleep
  * 
+ * Every 8 seconds the watch dog timer wakes up the device
+ * If the number of wake-ups means an hour has passed,
+ * then the current voltage is logged.
+ * If the screen has been on for 2 wake-ups then turn off the screen.
+ * Go to sleep
+ * 
+ * If a button is pressed, the screen is turned on,
+ * and the device goes back to sleep.
  */
 
 #include <avr/sleep.h>
@@ -65,6 +77,7 @@ void setup() {
   setupFromEEPROM();
   setupWDT();
   oled.setContrast(currentContrast);
+  displayGraph();
 }
 
 static void setupADC() {
@@ -94,6 +107,7 @@ static void setupFromEEPROM() {
   if (eepromOk) {
     currentContrast = EEPROM.read(BATTERY_CONTRAST_ADDRESS);
     currentAddress = EEPROM.read(BATTERY_CURRENT_ADDRESS);
+    recordVoltage(); // Write a new value at power-on so that
   } else {
     settingsResetAction();
   }
@@ -231,9 +245,13 @@ void settingsResetAction(void) {
   for (uint16_t offset = 0; offset < sizeof(header); offset++) {
     EEPROM.write(offset, pgm_read_byte(&header[offset]));
   }
-  // Unused
+  // Default all readings to current voltage value
+  uint16_t result = readADC();
+  //result = 1126400L / result; // Calculate Vcc (in mV); 1.1*1024*1000
+  result = 11264L / result; // 10ths of a volt
+
   for (uint16_t address = sizeof(header); address < 128; address++) {
-    EEPROM.write(address, 0);
+    EEPROM.write(address, (byte)result);
   }
   eepromOk = true;
   currentAddress = BATTERY_CURRENT_ADDRESS;
