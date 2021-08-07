@@ -18,8 +18,12 @@ switchFrame	KEYWORD2
 currentRenderFrame	KEYWORD2
 currentDisplayFrame	KEYWORD2
 setFont	KEYWORD2
+setUnicodeFont	KEYWORD2
 setFontOnly	KEYWORD2
 setSpacing	KEYWORD2
+setCombineFunction	KEYWORD2
+getExpectedUtf8Bytes	KEYWORD2
+getCharacterDataOffset	KEYWORD2
 getCharacterWidth	KEYWORD2
 getTextWidth	KEYWORD2
 setCursor	KEYWORD2
@@ -31,6 +35,8 @@ fillToEOL	KEYWORD2
 fillLength	KEYWORD2
 clear	KEYWORD2
 clearToEOL	KEYWORD2
+printDoubleSize	KEYWORD2
+printDoubleSizeSmooth	KEYWORD2
 bitmap	KEYWORD2
 startData	KEYWORD2
 sendData	KEYWORD2
@@ -45,8 +51,6 @@ setRotation	KEYWORD2
 clipText	KEYWORD2
 clipTextP	KEYWORD2
 invertOutput	KEYWORD2
-printDoubleSize	KEYWORD2
-printDoubleSizeSmooth	KEYWORD2
 #######################################
 # SSD1306 1. Fundamental Command Table (KEYWORD2)
 #######################################
