@@ -34,6 +34,7 @@ I have extensively re-written it, with the following changes:
   - UTF-8 encoded strings.
   - Printing double size text, with and without smoothing.
   - Option to reduce memory usage if print functions are not required.
+- v2.1 Added support for a user callback function to combine images. See the BatteryMonitor example.
 
 ## Online Simulator
 
