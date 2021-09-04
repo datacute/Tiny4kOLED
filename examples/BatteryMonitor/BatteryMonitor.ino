@@ -63,6 +63,15 @@ volatile boolean f_wdt = 0;
 static int wdt_counter = 0;
 static int graph_display_counter = 0;
 
+// The watch dog timer wakes up the device every 8 seconds
+// The device graphs the last 120 readings
+// 10800 * 8 seconds = 1 day. 120 days = 4 months, mark every 7th or 30th
+// 450 * 8 seconds = 1 hour. 120 hours = 5 days, mark every 24th
+// 75 * 8 seconds = 10 minutes. 1200 minutes = 20 hours, mark every 6th
+// 15 * 8 seconds = 2 minutes. 240 minutes = 4 hours, mark every 30th
+#define REPORT_PERIOD 450
+#define GRAPH_TICK_COUNT 24
+
 // Watchdog Interrupt Service / is executed when watchdog timed out
 ISR(WDT_vect) {
   f_wdt=1;  // set global flag
@@ -135,7 +144,7 @@ void loop() {
   if (f_wdt == 1) {
     f_wdt=0;
     wdt_counter++;
-    if (wdt_counter == 450) { // 450 for 1 hour
+    if (wdt_counter == REPORT_PERIOD) {
       wdt_counter = 0;
       recordVoltage();
     }
@@ -211,7 +220,7 @@ static void displayGraph() {
       if (line == 7) {
         b |= 0x40;
         tick_column++;
-        if (tick_column == 24) {
+        if (tick_column == GRAPH_TICK_COUNT) {
           b |= 0x80;
           tick_column = 0;
         }
