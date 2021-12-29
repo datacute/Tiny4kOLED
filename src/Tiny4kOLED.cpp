@@ -502,6 +502,7 @@ void SSD1306Device::printDoubleSize(uint8_t c) {
 	ssd1306_send_stop();
 
 	setMemoryAddressingMode(2);
+	setPageAddress(0,7);
 
 	setCursor(oledX + (w + characterSpacing) * 2 , oledY);
 }
@@ -550,6 +551,7 @@ void SSD1306Device::printDoubleSizeSmooth(uint8_t c) {
 	sendDoubleBits(col0R);
 	ssd1306_send_stop();
 	setMemoryAddressingMode(2);
+	setPageAddress(0,7);
 	setCursor(oledX + (w + characterSpacing) * 2 , oledY);
 }
 
