@@ -18,7 +18,11 @@ switchFrame	KEYWORD2
 currentRenderFrame	KEYWORD2
 currentDisplayFrame	KEYWORD2
 setFont	KEYWORD2
+setFontX2	KEYWORD2
+setFontX2Smooth	KEYWORD2
 setUnicodeFont	KEYWORD2
+setUnicodeFontX2	KEYWORD2
+setUnicodeFontX2Smooth	KEYWORD2
 setFontOnly	KEYWORD2
 setSpacing	KEYWORD2
 setCombineFunction	KEYWORD2
@@ -32,11 +36,11 @@ getCursorY	KEYWORD2
 newLine	KEYWORD2
 fill	KEYWORD2
 fillToEOL	KEYWORD2
+fillToEOP	KEYWORD2
 fillLength	KEYWORD2
 clear	KEYWORD2
 clearToEOL	KEYWORD2
-printDoubleSize	KEYWORD2
-printDoubleSizeSmooth	KEYWORD2
+clearToEOP	KEYWORD2
 bitmap	KEYWORD2
 startData	KEYWORD2
 sendData	KEYWORD2

@@ -26,6 +26,7 @@ static uint8_t unicodeFontNum = 0;
 static const DCfont *oledFont = 0;
 static uint8_t oledX = 0, oledY = 0;
 static uint8_t renderingFrame = 0xB0, drawingFrame = 0x40;
+static uint8_t doubleSize = 0;
 static uint8_t characterSpacing = 0;
 static DCUnicodeCodepoint unicodeCodepoint = { 0 };
 static uint8_t utf8Continuation = 0;
@@ -35,7 +36,8 @@ static bool (*wireBeginTransmissionFn)(void);
 static bool (*wireWriteFn)(uint8_t byte);
 static uint8_t (*wireEndTransmissionFn)(void);
 
-static size_t (SSD1306Device::* writeFn)(byte c) = 0;
+static void (SSD1306Device::* decodeFn)(uint8_t c) = 0;
+static void (SSD1306Device::* renderFn)(uint8_t c) = 0;
 static uint8_t (*combineFn)(uint8_t x, uint8_t y, uint8_t b) = 0;
 static uint8_t writesSinceSetCursor = 0;
 
@@ -192,14 +194,50 @@ void SSD1306Device::setRotation(uint8_t rotation) {
 
 void SSD1306Device::setFont(const DCfont *font) {
 	setFontOnly(font);
-	writeFn = &SSD1306Device::writeAsciiInternal;
+	decodeFn = &SSD1306Device::decodeAsciiInternal;
+	renderFn = &SSD1306Device::renderOriginalSize;
+	doubleSize = 0;
 }
 
 void SSD1306Device::setUnicodeFont(const DCUnicodeFont *unicode_font) {
 	oledUnicodeFont = unicode_font;
 	unicodeFontNum = 0;
 	setFontOnly(oledUnicodeFont->fonts[unicodeFontNum].font);
-	writeFn = &SSD1306Device::writeUtf8Internal;
+	decodeFn = &SSD1306Device::decodeUtf8Internal;
+	renderFn = &SSD1306Device::renderOriginalSize;
+	doubleSize = 0;
+}
+
+void SSD1306Device::setFontX2(const DCfont *font) {
+	setFontOnly(font);
+	decodeFn = &SSD1306Device::decodeAsciiInternal;
+	renderFn = &SSD1306Device::renderDoubleSize;
+	doubleSize = 1;
+}
+
+void SSD1306Device::setUnicodeFontX2(const DCUnicodeFont *unicode_font) {
+	oledUnicodeFont = unicode_font;
+	unicodeFontNum = 0;
+	setFontOnly(oledUnicodeFont->fonts[unicodeFontNum].font);
+	decodeFn = &SSD1306Device::decodeUtf8Internal;
+	renderFn = &SSD1306Device::renderDoubleSize;
+	doubleSize = 1;
+}
+
+void SSD1306Device::setFontX2Smooth(const DCfont *font) {
+	setFontOnly(font);
+	decodeFn = &SSD1306Device::decodeAsciiInternal;
+	renderFn = &SSD1306Device::renderDoubleSizeSmooth;
+	doubleSize = 1;
+}
+
+void SSD1306Device::setUnicodeFontX2Smooth(const DCUnicodeFont *unicode_font) {
+	oledUnicodeFont = unicode_font;
+	unicodeFontNum = 0;
+	setFontOnly(oledUnicodeFont->fonts[unicodeFontNum].font);
+	decodeFn = &SSD1306Device::decodeUtf8Internal;
+	renderFn = &SSD1306Device::renderDoubleSizeSmooth;
+	doubleSize = 1;
 }
 
 void SSD1306Device::setFontOnly(const DCfont *font) {
@@ -242,7 +280,7 @@ uint16_t SSD1306Device::getCharacterDataOffset(uint8_t c) {
 	return offset * h;
 }
 
-uint8_t SSD1306Device::getCharacterWidth(byte c) {
+uint8_t SSD1306Device::getCharacterWidth(uint8_t c) {
 	uint8_t w = oledFont->width;
 	if (w == 0) {
 		uint16_t c_index = (uint16_t)c - oledFont->first;
@@ -287,15 +325,16 @@ void SSD1306Device::clear(void) {
 void SSD1306Device::fill(uint8_t fill) {
 	for (uint8_t m = 0; m < oledPages; m++) {
 		setCursor(0, m);
-		fillToEOL(fill);
+		fillToEOP(fill);
 	}
 	setCursor(0, 0);
 }
 
 void SSD1306Device::newLine(uint8_t fontHeight) {
-	oledY+=fontHeight;
-	if (oledY > oledPages - fontHeight) {
-		oledY = oledPages - fontHeight;
+	uint8_t h = fontHeight << doubleSize;
+	oledY+=h;
+	if (oledY > oledPages - h) {
+		oledY = oledPages - h;
 	}
 	setCursor(0, oledY);
 }
@@ -305,23 +344,25 @@ void SSD1306Device::newLine(void) {
 }
 
 size_t SSD1306Device::write(byte c) {
-	if (writeFn) return (this->*writeFn)(c);
+	if (decodeFn) (this->*decodeFn)(c);
 	return 1;
 }
 
-size_t SSD1306Device::writeAsciiInternal(byte c) {
+void SSD1306Device::decodeAsciiInternal(uint8_t c) {
 	if (c == '\r')
-		return 1;
+		return;
 
 	if (c == '\n') {
 		newLine(oledFont->height);
-		return 1;
+		return;
 	}
 
-	return writeCommonInternal(c);
+	if (oledFont->first <= c &&
+	    oledFont->last >= c)
+  	(this->*renderFn)(c);
 }
 
-size_t SSD1306Device::writeCommonInternal(byte c) {
+void SSD1306Device::renderOriginalSize(uint8_t c) {
 	uint8_t w = getCharacterWidth(c);
 	uint8_t h = oledFont->height;
 	uint8_t spacing = characterSpacing;
@@ -352,48 +393,36 @@ size_t SSD1306Device::writeCommonInternal(byte c) {
 		}
 	}
 	while (--line);
-	return 1;
 }
 
 uint8_t SSD1306Device::getExpectedUtf8Bytes(void) {
 	return utf8Continuation;
 }
 
-bool SSD1306Device::SelectUnicodeBlock(void) {
-	uint32_t c = unicodeCodepoint.codepoint;
-	// Don't switch blocks for control characters, nor space
-	if (c == '\r')
-		return false;
-	
-	if (c == '\n') {
+void SSD1306Device::RenderUnicodeSpace(void) {
+	if (oledX > ((uint8_t)oledWidth - (oledUnicodeFont->space_width + characterSpacing))) {
 		newLine(oledFont->height);
-		return false;
-	}
-
-	if (c < ' ') return false;
-
-	if (c == ' ') {
-		if (oledX > ((uint8_t)oledWidth - (oledUnicodeFont->space_width + characterSpacing))) {
-			newLine(oledFont->height);
-		} else {
-			uint8_t line = oledFont->height;
-			do
-			{
-				ssd1306_send_data_start();
-				repeatData(0, oledUnicodeFont->space_width + characterSpacing);
-				ssd1306_send_stop();
-				if (line > 1) {
-					setCursor(oledX, oledY + 1);
-				}
-				else {
-					setCursor(oledX + oledUnicodeFont->space_width + characterSpacing, oledY - (oledFont->height - 1));
-				}
+	} else {
+		uint8_t textHeight = oledFont->height << doubleSize;
+		uint8_t spaceWidth = (oledUnicodeFont->space_width + characterSpacing) << doubleSize;
+		uint8_t line = textHeight;
+		do
+		{
+			ssd1306_send_data_start();
+			repeatData(0, spaceWidth);
+			ssd1306_send_stop();
+			if (line > 1) {
+				setCursor(oledX, oledY + 1);
 			}
-			while (--line);
+			else {
+				setCursor(oledX + spaceWidth, oledY - (textHeight - 1));
+			}
 		}
-		return false;
+		while (--line);
 	}
+}
 
+bool SSD1306Device::SelectUnicodeBlock(void) {
 	if (oledUnicodeFont->fonts[unicodeFontNum].unicode_block == unicodeCodepoint.unicode.block && 
 	    oledUnicodeFont->fonts[unicodeFontNum].unicode_plane == unicodeCodepoint.unicode.plane &&
 	    oledUnicodeFont->fonts[unicodeFontNum].font->first <= unicodeCodepoint.unicode.offset &&
@@ -414,15 +443,7 @@ bool SSD1306Device::SelectUnicodeBlock(void) {
 	return false;
 }
 
-size_t SSD1306Device::WriteUnicodeCharacter(void) {
-	// If none of the fonts support the current unicode block, don't output anything.
-	if (!SelectUnicodeBlock())
-		return 1;
-	return writeCommonInternal(unicodeCodepoint.unicode.offset);
-}
-
-size_t SSD1306Device::writeUtf8Internal(byte c) {
-	uint8_t utf8byte = c;
+void SSD1306Device::decodeUtf8Internal(uint8_t utf8byte) {
 	if ((utf8byte & 0x80) == 0x00) { // U+0000 to U+007F (most common?)
 		unicodeCodepoint.codepoint = utf8byte;
 		utf8Continuation = 0;
@@ -444,8 +465,28 @@ size_t SSD1306Device::writeUtf8Internal(byte c) {
 		utf8Continuation = 3;
 	}
 
-	if (utf8Continuation != 0) return 1;
-	return WriteUnicodeCharacter();
+	if (utf8Continuation != 0) return;
+
+	uint32_t c = unicodeCodepoint.codepoint;
+
+	// Don't switch blocks for control characters, nor space
+
+	if (c == '\n') {
+		newLine(oledFont->height);
+		return;
+	}
+
+	if (c < ' ') return;
+
+	if (c == ' ') {
+		RenderUnicodeSpace();
+		return;
+	}
+
+	// If none of the fonts support the current unicode block, don't output anything.
+	if (SelectUnicodeBlock()) {
+		(this->*renderFn)(unicodeCodepoint.unicode.offset);
+	}
 }
 
 static uint16_t ReadCharacterBits(uint8_t * cPtr, uint8_t w) {
@@ -475,16 +516,7 @@ void SSD1306Device::sendDoubleBits(uint32_t doubleBits) {
   }
 }
 
-void SSD1306Device::printDoubleSize(DATACUTE_F_MACRO_T *text) {
-	PGM_P p = reinterpret_cast<PGM_P>(text);
-	uint8_t c = pgm_read_byte(p++);
-	while (c != 0) {
-		printDoubleSize(c);
-		c = pgm_read_byte(p++);
-	}
-}
-
-void SSD1306Device::printDoubleSize(uint8_t c) {
+void SSD1306Device::renderDoubleSize(uint8_t c) {
 	uint16_t offset = getCharacterDataOffset(c);
 	uint8_t w = getCharacterWidth(c);
 	uint8_t h = oledFont->height;
@@ -509,16 +541,7 @@ void SSD1306Device::printDoubleSize(uint8_t c) {
 	setCursor(oledX + (w + characterSpacing) * 2 , oledY);
 }
 
-void SSD1306Device::printDoubleSizeSmooth(DATACUTE_F_MACRO_T *text) {
-	PGM_P p = reinterpret_cast<PGM_P>(text);
-	uint8_t c = pgm_read_byte(p++);
-	while (c != 0) {
-		printDoubleSizeSmooth(c);
-		c = pgm_read_byte(p++);
-	}
-}
-
-void SSD1306Device::printDoubleSizeSmooth(uint8_t c) {
+void SSD1306Device::renderDoubleSizeSmooth(uint8_t c) {
 	uint16_t offset = getCharacterDataOffset(c);
 	uint8_t w = getCharacterWidth(c);
 	uint8_t h = oledFont->height;
@@ -575,6 +598,23 @@ void SSD1306Device::clearToEOL(void) {
 }
 
 void SSD1306Device::fillToEOL(uint8_t fill) {
+	uint8_t x = oledX;
+	uint8_t pagesToClear = oledFont->height << doubleSize;
+	do
+	{
+		fillToEOP(fill);
+		if (pagesToClear > 1) {
+			setCursor(x,oledY + 1);
+		}
+	}
+	while (--pagesToClear);
+}
+
+void SSD1306Device::clearToEOP(void) {
+	fillToEOP(0x00);
+}
+
+void SSD1306Device::fillToEOP(uint8_t fill) {
 	fillLength(fill, oledWidth - oledX);
 }
 

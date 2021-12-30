@@ -105,13 +105,17 @@ class SSD1306Device {
 		uint8_t currentDisplayFrame(void);
 		void setFont(const DCfont *font);
 		void setUnicodeFont(const DCUnicodeFont *unicode_font);
+		void setFontX2(const DCfont *font);
+		void setUnicodeFontX2(const DCUnicodeFont *unicode_font);
+		void setFontX2Smooth(const DCfont *font);
+		void setUnicodeFontX2Smooth(const DCUnicodeFont *unicode_font);
 		// If your code does not call oled.print then you can save space by calling setFontOnly instead of the above.
 		void setFontOnly(const DCfont *font);
 		void setSpacing(uint8_t spacing);
 		void setCombineFunction(uint8_t (*combineFunc)(uint8_t, uint8_t, uint8_t));
 		uint8_t getExpectedUtf8Bytes(void);
-		uint16_t getCharacterDataOffset(byte c);
-		uint8_t getCharacterWidth(byte c);
+		uint16_t getCharacterDataOffset(uint8_t c);
+		uint8_t getCharacterWidth(uint8_t c);
 		uint16_t getTextWidth(DATACUTE_F_MACRO_T *text);
 		void setCursor(uint8_t x, uint8_t y);
 		uint8_t getCursorX();
@@ -119,13 +123,11 @@ class SSD1306Device {
 		void newLine();
 		void fill(uint8_t fill);
 		void fillToEOL(uint8_t fill);
+		void fillToEOP(uint8_t fill);
 		void fillLength(uint8_t fill, uint8_t length);
 		void clear(void);
 		void clearToEOL(void);
-		void printDoubleSize(DATACUTE_F_MACRO_T *text);
-		void printDoubleSize(uint8_t c);
-		void printDoubleSizeSmooth(DATACUTE_F_MACRO_T *text);
-		void printDoubleSizeSmooth(uint8_t c);
+		void clearToEOP(void);
 		void bitmap(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const uint8_t bitmap[]);
 		void startData(void);
 		void sendData(const uint8_t data);
@@ -203,11 +205,13 @@ class SSD1306Device {
 
 	private:
 		void newLine(uint8_t fontHeight);
-		size_t writeAsciiInternal(byte c);
-		size_t writeCommonInternal(byte c);
-		size_t writeUtf8Internal(byte c);
+		void decodeAsciiInternal(uint8_t c);
+		void decodeUtf8Internal(uint8_t c);
+		void RenderUnicodeSpace(void);
 		bool SelectUnicodeBlock(void);
-		size_t WriteUnicodeCharacter(void);
+		void renderOriginalSize(uint8_t c);
+		void renderDoubleSize(uint8_t c);
+		void renderDoubleSizeSmooth(uint8_t c);
 		void sendDoubleBits(uint32_t doubleBits);
 
 };

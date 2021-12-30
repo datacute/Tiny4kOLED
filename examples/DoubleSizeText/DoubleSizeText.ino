@@ -66,11 +66,11 @@ void normalSize() {
 }
 
 void doubleSize() {
-  oled.setFont(FONT6X8P);
+  oled.setFontX2(FONT6X8P);
   oled.setCursor(0, 2);
-  oled.printDoubleSize(F("Double Size"));
+  oled.print("Double Size");
 
-  oled.setFont(FONT8X16P);
+  oled.setFontX2(FONT8X16P);
   oled.setCursor(0, 4);
-  oled.printDoubleSize(F("Datacute"));
+  oled.print("Datacute");
 }
