@@ -448,20 +448,22 @@ size_t SSD1306Device::writeUtf8Internal(byte c) {
 	return WriteUnicodeCharacter();
 }
 
-static uint32_t ReadCharacterBits(uint8_t * cPtr, uint8_t w) {
-  uint32_t resultBits = pgm_read_byte(cPtr);
+static uint16_t ReadCharacterBits(uint8_t * cPtr, uint8_t w) {
+  uint16_t resultBits = pgm_read_byte(cPtr);
   if (oledFont->height > 1) {
-    resultBits |= pgm_read_byte(cPtr + w) << 8;
+    // change type before shifting, as otherwise signed ints will be used.
+    resultBits |= (uint16_t)pgm_read_byte(cPtr + w) << 8;
   }
   return resultBits;
 }
 
-static uint32_t Stretch(uint32_t x) {
-  x = (x<<8 | x) & 0x00FF00FF;
-  x = (x<<4 | x) & 0x0F0F0F0F;        // 0000abcd____efgh -> 0000abcd0000efgh
-  x = (x<<2 | x) & 0x33333333;        // 00ab__cd00ef__gh -> 00ab00cd00ef00gh
-  x = (x<<1 | x) & 0x55555555;        // 0a_b0c_d0e_f0g_h -> 0a0b0c0d0e0f0g0h
-  return x | x<<1;                    // aabbccddeeffgghh
+static uint32_t Stretch(uint16_t x) {
+  uint32_t x32 = (uint32_t)x;
+  x32 = (x32<<8 | x32) & 0x00FF00FF;
+  x32 = (x32<<4 | x32) & 0x0F0F0F0F;        // 0000abcd____efgh -> 0000abcd0000efgh
+  x32 = (x32<<2 | x32) & 0x33333333;        // 00ab__cd00ef__gh -> 00ab00cd00ef00gh
+  x32 = (x32<<1 | x32) & 0x55555555;        // 0a_b0c_d0e_f0g_h -> 0a0b0c0d0e0f0g0h
+  return x32 | x32<<1;                      // aabbccddeeffgghh
 }
 
 void SSD1306Device::sendDoubleBits(uint32_t doubleBits) {
@@ -494,7 +496,7 @@ void SSD1306Device::printDoubleSize(uint8_t c) {
 	ssd1306_send_data_start();
 	uint8_t * cPtr = &(oledFont->bitmap[offset]);
 	for (uint8_t col = 0 ; col < w; col++) {
-		uint32_t col0 = ReadCharacterBits(cPtr + col, w);
+		uint16_t col0 = ReadCharacterBits(cPtr + col, w);
 		uint32_t col0L = Stretch(col0);
 		sendDoubleBits(col0L);
 		sendDoubleBits(col0L);
@@ -527,12 +529,12 @@ void SSD1306Device::printDoubleSizeSmooth(uint8_t c) {
 	ssd1306_send_data_start();
 
 	uint8_t * cPtr = &(oledFont->bitmap[offset]);
-	uint32_t col0 = ReadCharacterBits(cPtr, w);
+	uint16_t col0 = ReadCharacterBits(cPtr, w);
 	uint32_t col0L, col0R, col1L, col1R;
 	col0L = Stretch(col0);
 	col0R = col0L;
 	for (uint8_t col = 1 ; col < w; col++) {
-		uint32_t col1 = ReadCharacterBits(cPtr + col, w);
+		uint16_t col1 = ReadCharacterBits(cPtr + col, w);
 		col1L = Stretch(col1);
 		col1R = col1L;
 		for (uint8_t i=0; i<16; i++) { // (15 pairs of bits in 8 bit line)
