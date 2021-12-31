@@ -55,13 +55,14 @@ v2.2 added an I<sup>2</sup>C speed test example, which demonstrates really well 
 
 The Wokwi Online Arduino Simulator has quite good support for the core features of the 128x64 SSD1306. Here are links to some of the Tiny4kOLED examples:
 
-- [Bitmap Example](https://wokwi.com/arduino/projects/293572291729555977)
-- [CustomChinesefont](https://wokwi.com/arduino/projects/293572501640839688)
-- [DatacuteBoxyFont](https://wokwi.com/arduino/projects/293573051240415757)
-- [Devices-128x32](https://wokwi.com/arduino/projects/293573543197671949)
-- [Devices-128x64](https://wokwi.com/arduino/projects/293574465813479944)
-- [Features](https://wokwi.com/arduino/projects/293575386210501128)
-- [DoubleBufferedDisplay](https://wokwi.com/arduino/projects/293575569494245901)
+- [Bitmap Example](https://wokwi.com/arduino/projects/319464359609762388)
+- [CustomChinesefont](https://wokwi.com/arduino/projects/319464288025576020)
+- [DatacuteBoxyFont](https://wokwi.com/arduino/projects/319464228287152724)
+- [Devices-128x32](https://wokwi.com/arduino/projects/319464160996885075)
+- [Devices-128x64](https://wokwi.com/arduino/projects/319464123042628178)
+- [Features](https://wokwi.com/arduino/projects/319463831239656019)
+- [DoubleBufferedDisplay](https://wokwi.com/arduino/projects/319463992706728532)
+- [UnicodeDemo](https://wokwi.com/arduino/projects/319465327109866067)
 
 ## 128x64 / 128x32 / 72x40 / 64x48 / 64x32
 
