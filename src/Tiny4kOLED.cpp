@@ -400,11 +400,11 @@ uint8_t SSD1306Device::getExpectedUtf8Bytes(void) {
 }
 
 void SSD1306Device::RenderUnicodeSpace(void) {
-	if (oledX > ((uint8_t)oledWidth - (oledUnicodeFont->space_width + characterSpacing))) {
+	uint8_t spaceWidth = (oledUnicodeFont->space_width + characterSpacing) << doubleSize;
+	if (oledX > ((uint8_t)oledWidth - spaceWidth)) {
 		newLine(oledFont->height);
 	} else {
 		uint8_t textHeight = oledFont->height << doubleSize;
-		uint8_t spaceWidth = (oledUnicodeFont->space_width + characterSpacing) << doubleSize;
 		uint8_t line = textHeight;
 		do
 		{
