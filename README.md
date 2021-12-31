@@ -35,6 +35,21 @@ I have extensively re-written it, with the following changes:
   - Printing double size text, with and without smoothing.
   - Option to reduce memory usage if print functions are not required.
 - v2.1 Added support for a user callback function to combine images. See the BatteryMonitor example.
+- v2.2 Replaced double size printing methods with double sized font selection methods.
+  - Standard print methods, Unicode fonts, and new lines now work correctly with double sized text. See [Refactoring to support double sized rendering](https://github.com/datacute/Tiny4kOLED/wiki/Refactoring-to-support-double-sized-rendering). (Note: Double size text only works with fonts up to 16 pixels high.)
+  - Added clearToEOP and fillToEOP where P stands for page, and fixed issue #10 so the EOL methods work with font heights larger than 8 pixels (1 page).
+  - Added a 4th I<sup>2</sup>C interface to do raw bit-banging, but ignoring all the I<sup>2</sup>C rules.
+
+## I2C Speeds
+
+v2.2 added an I<sup>2</sup>C speed test example, which demonstrates really well why the various implementations were added:
+
+| Implementation | Time to write 128x64 screen |
+| ------------- | ------------- |
+| Wire (Default) | 348 ms |
+| TinyWireM | 142 ms |
+| tiny-i2c | 56 ms |
+| bitbang | 45 ms |
 
 ## Online Simulator
 
