@@ -63,6 +63,7 @@ The Wokwi Online Arduino Simulator has quite good support for the core features 
 - [Features](https://wokwi.com/arduino/projects/319463831239656019)
 - [DoubleBufferedDisplay](https://wokwi.com/arduino/projects/319463992706728532)
 - [UnicodeDemo](https://wokwi.com/arduino/projects/319465327109866067)
+- [DoubleSizeSmoothText](https://wokwi.com/arduino/projects/319466098578686547)
 
 ## 128x64 / 128x32 / 72x40 / 64x48 / 64x32
 
