@@ -55,15 +55,16 @@ v2.2 added an I<sup>2</sup>C speed test example, which demonstrates really well 
 
 The Wokwi Online Arduino Simulator has quite good support for the core features of the 128x64 SSD1306. Here are links to some of the Tiny4kOLED examples:
 
-- [Bitmap Example](https://wokwi.com/arduino/projects/319464359609762388)
-- [CustomChinesefont](https://wokwi.com/arduino/projects/319464288025576020)
-- [DatacuteBoxyFont](https://wokwi.com/arduino/projects/319464228287152724)
+- [Bitmap](https://wokwi.com/arduino/projects/319464359609762388)
+- [Custom Chinese Font](https://wokwi.com/arduino/projects/319464288025576020)
+- [Datacute Boxy Font](https://wokwi.com/arduino/projects/319464228287152724)
 - [Devices-128x32](https://wokwi.com/arduino/projects/319464160996885075)
 - [Devices-128x64](https://wokwi.com/arduino/projects/319464123042628178)
-- [Features](https://wokwi.com/arduino/projects/319463831239656019)
-- [DoubleBufferedDisplay](https://wokwi.com/arduino/projects/319463992706728532)
-- [UnicodeDemo](https://wokwi.com/arduino/projects/319465327109866067)
-- [DoubleSizeSmoothText](https://wokwi.com/arduino/projects/319466098578686547)
+- [Features Menu](https://wokwi.com/arduino/projects/319463831239656019)
+- [Double Buffered Display](https://wokwi.com/arduino/projects/319463992706728532)
+- [Unicode Font](https://wokwi.com/arduino/projects/319465327109866067)
+- [Double-Size Smooth Text](https://wokwi.com/arduino/projects/319466098578686547)
+- [Battery Monitor](https://wokwi.com/arduino/projects/321659614952161874)
 
 ## 128x64 / 128x32 / 72x40 / 64x48 / 64x32
 
