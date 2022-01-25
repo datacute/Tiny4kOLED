@@ -7,7 +7,7 @@
  * The graph's y axis range is from 0 to 6 volts.
  * 
  * When using Spence Konde's ATTinyCore https://github.com/SpenceKonde/ATTinyCore
- * and using a chip without Optiboot, with LTO enabled, this sketch takes 5782 bytes of flash.
+ * and using a chip without Optiboot, with LTO enabled, this sketch takes 5952 bytes of flash.
  * 
  * The battery level is measured roughly every hour
  * and the measured voltages are stored in EEPROM
