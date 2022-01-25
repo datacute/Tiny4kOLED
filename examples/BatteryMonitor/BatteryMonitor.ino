@@ -56,7 +56,7 @@ static uint8_t currentContrast = BATTERY_DEFAULT_CONTRAST;
 static uint8_t currentAddress = BATTERY_READINGS_ADDRESS;
 
 #define MAIN_BUTTON 4
-#define ENTER_BUTTON 1
+#define ENTER_BUTTON 3
 
 // Variables for the Sleep/power down modes:
 volatile boolean f_wdt = 0;
@@ -263,7 +263,7 @@ void settingsResetAction(void) {
     EEPROM.write(address, (byte)result);
   }
   eepromOk = true;
-  currentAddress = BATTERY_CURRENT_ADDRESS;
+  currentAddress = BATTERY_READINGS_ADDRESS;
   currentContrast = BATTERY_DEFAULT_CONTRAST;
 }
 
