@@ -523,7 +523,8 @@ void SSD1306Device::renderDoubleSize(uint8_t c) {
 
 	// change memory mode to advance pages, before columns
 	setMemoryAddressingMode(1);
-	setPageAddress(oledY, oledY + h + h - 1);
+	uint8_t topPage = oledY + (renderingFrame & 0x04);
+	setPageAddress(topPage, topPage + h + h - 1);
 
 	ssd1306_send_data_start();
 	uint8_t * cPtr = &(oledFont->bitmap[offset]);
@@ -548,7 +549,9 @@ void SSD1306Device::renderDoubleSizeSmooth(uint8_t c) {
 
 	// change memory mode to advance pages, before columns
 	setMemoryAddressingMode(1);
-	setPageAddress(oledY, oledY + h + h - 1);
+	uint8_t topPage = oledY + (renderingFrame & 0x04);
+	setPageAddress(topPage, topPage + h + h - 1);
+
 	ssd1306_send_data_start();
 
 	uint8_t * cPtr = &(oledFont->bitmap[offset]);
