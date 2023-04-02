@@ -39,17 +39,17 @@ I have extensively re-written it, with the following changes:
   - Standard print methods, Unicode fonts, and new lines now work correctly with double sized text. See [Refactoring to support double sized rendering](https://github.com/datacute/Tiny4kOLED/wiki/Refactoring-to-support-double-sized-rendering). (Note: Double size text only works with fonts up to 16 pixels high.)
   - Added clearToEOP and fillToEOP where P stands for page, and fixed issue #10 so the EOL methods work with font heights larger than 8 pixels (1 page).
   - Added a 4th I<sup>2</sup>C interface to do raw bit-banging, but ignoring all the I<sup>2</sup>C rules.
+  - Fixed double size text when double buffering (Issue #41) (v2.2.2)
+- v2.3 Fixed % character in FONT6X8 and derivatives (Issue #55)
 
-## I2C Speeds
+## I2C Speeds and External Pullup Resistors
 
-v2.2 added an I<sup>2</sup>C speed test example, which demonstrates really well why the various implementations were added:
+v2.2 added an I<sup>2</sup>C speed test example, which can be used as a simple (but rough) guide to the performance of your solution. It display the number of ms it takes to fill the screen.
 
-| Implementation | Time to write 128x64 screen |
-| ------------- | ------------- |
-| Wire (Default) | 348 ms |
-| TinyWireM | 142 ms |
-| tiny-i2c | 56 ms |
-| bitbang | 45 ms |
+Important Notes:
+
+- Spence Konde (Author and maintainer of the best AVR Cores) has done more analysis of write speeds (see Issue #52), and showing the importance of ensuring your I<sup>2</sup>C lines have the correct external pullup resisters.
+- This section used to have a table of times for different I<sup>2</sup>C implementations, using an ATTiny85 with nothing but a single random SSD1306 OLED module connected, and NO EXTERNAL PULLUPS. Unfortunately it made the Wire library look bad. The Wire library is the default for Tiny4kOLED as it is the best for a wide range of I<sup>2</sup>C scenarios. Other implementations take shortcuts or make compromises that may result in incorrect behaviour depending on your hardware configuration choices.
 
 ## Online Simulator
 
