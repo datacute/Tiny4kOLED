@@ -52,6 +52,7 @@ const DCfont TinyOLED4kfont16x16cn = {
   (uint8_t *)ssd1306xled_font16x16cn,
   16, // character width in pixels
   2, // character height in pages (8 pixels)
-  48,52 // ASCII extents
+  48,52, // ASCII extents
+  0,0,0 // Unused for fixed width fonts
   };
 

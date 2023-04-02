@@ -65,6 +65,7 @@ const DCfont cp_437_box_drawing_font = {
   (uint8_t *)cp_437_box_drawing_font_bitmap,
   8, // character width in pixels
   1, // character height in pages (8 pixels)
-  175,223 // ASCII extents
+  175,223, // ASCII extents
+  0,0,0 // Unused for fixed width fonts
   };
 
