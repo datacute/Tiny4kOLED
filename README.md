@@ -130,6 +130,13 @@ The SSD1306 remembers many of its settings even when powered off. After experime
 // To use the TinyI2C library from https://github.com/technoblogy/tiny-i2c
 //#include <TinyI2CMaster.h>
 
+// To use the SoftI2CMaster library from https://github.com/felias-fogg/SoftI2CMaster
+// #define SCL_PIN PINB2
+// #define SCL_PORT PORTB
+// #define SDA_PIN PINB0
+// #define SDA_PORT PORTB
+// #include <SoftWire.h>
+
 // The blue OLED screen requires a long initialization on power on.
 // The code to wait for it to be ready uses 20 bytes of program storage space
 // If you are using a white OLED, this can be reclaimed by uncommenting
