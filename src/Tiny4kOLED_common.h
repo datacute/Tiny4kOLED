@@ -6,7 +6,9 @@
  *
  */
 #include <stdint.h>
+#ifndef RP2040
 #include <Arduino.h>
+#endif
 
 #ifndef TINY4KOLEDCOMMON_H
 #define TINY4KOLEDCOMMON_H
@@ -74,18 +76,30 @@ union DCUnicodeCodepoint {
 
 // Digistump uses
 // # define F(s) ((fstr_t*)PSTR(s))
+#ifdef RP2040
+#include <cstddef>
+#include <string>
 
-#ifndef DATACUTE_F_MACRO_T
-#ifdef ARDUINO_AVR_DIGISPARK
-#define DATACUTE_F_MACRO_T fstr_t
+#define DATACUTE_F_MACRO_T const char
+using byte = uint8_t;
+#define pgm_read_byte(addr) *reinterpret_cast<const uint8_t *>(addr)
+#define pgm_read_word(addr) *reinterpret_cast<const uint16_t *>(addr)
+#define PGM_P const char *
+
 #else
-#define DATACUTE_F_MACRO_T const __FlashStringHelper
-#endif
-#endif
 
-#ifndef FPSTR
-#define FPSTR(pstr_pointer) (reinterpret_cast<DATACUTE_F_MACRO_T *>(pstr_pointer))
-#endif
+# ifndef DATACUTE_F_MACRO_T
+#  ifdef ARDUINO_AVR_DIGISPARK
+#   define DATACUTE_F_MACRO_T fstr_t
+#  else
+#   define DATACUTE_F_MACRO_T const __FlashStringHelper
+#  endif
+# endif
+
+# ifndef FPSTR
+#  define FPSTR(pstr_pointer) (reinterpret_cast<DATACUTE_F_MACRO_T *>(pstr_pointer))
+# endif
+#endif // RP2040
 
 // ----------------------------------------------------------------------------
 
@@ -216,14 +230,28 @@ class SSD1306Device {
 
 };
 
-class SSD1306PrintDevice: public Print, public SSD1306Device {
+#ifdef RP2040
+class SSD1306PrintDevice : public SSD1306Device
+#else
+class SSD1306PrintDevice : public Print, public SSD1306Device
+#endif
+{
 	public:
-		SSD1306PrintDevice(void (*wireBeginFunc)(void), bool (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), uint8_t (*wireEndTransmissionFunc)(void)) : 
-			SSD1306Device(wireBeginFunc, wireBeginTransmissionFunc, wireWriteFunc, wireEndTransmissionFunc) {};
-		size_t write(byte c) {
-			return SSD1306Device::write(c);
-		};
+		SSD1306PrintDevice(void (*wireBeginFunc)(void), bool (*wireBeginTransmissionFunc)(void), bool (*wireWriteFunc)(uint8_t byte), uint8_t (*wireEndTransmissionFunc)(void)) :
+			SSD1306Device(wireBeginFunc, wireBeginTransmissionFunc, wireWriteFunc, wireEndTransmissionFunc) {}
+#ifdef RP2040
+		void print(const char *text)
+		{
+			while (*text) {
+				write(*text++);
+			}
+		}
+		void print(int val) { print(std::to_string(val).c_str()); }
+		void print(double val) { print(std::to_string(val).c_str()); }
+#else
+		size_t write(byte c) override { return SSD1306Device::write(c); }
 		using Print::write;
+#endif
 };
 
 // ----------------------------------------------------------------------------

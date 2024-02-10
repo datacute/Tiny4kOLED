@@ -14,6 +14,8 @@
 #include "Tiny4kOLED_TinyWireM.h"
 #elif defined(TinyI2CMaster_h)
 #include "Tiny4kOLED_tiny-i2c.h"
+#elif defined(RP2040)
+#include "Tiny4kOLED_rp2040.h"
 #else
 #include <Wire.h>
 #include "Tiny4kOLED_Wire.h"
